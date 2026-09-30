@@ -156,3 +156,7 @@ With `RB=True`, the Rao-Blackwellized estimate $\hat\beta_{\mathrm{RB}}$ (paper 
 - Zhou, Q., Yang, J., Vats, D., Roberts, G. O., & Rosenthal, J. S. (2022). Dimension-free mixing for high-dimensional Bayesian variable selection. *Journal of the Royal Statistical Society Series B*, 84(3), 742–768. doi:10.1111/rssb.12546
 - Fan, J., & Lv, J. (2008). Sure independence screening for ultrahigh dimensional feature space. *JRSS-B*.
 - Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., & Bürkner, P.-C. (2021). Rank-normalization, folding, and localization: an improved R̂ for assessing convergence of MCMC. *Bayesian Analysis*.
+
+## License
+
+Released under the [MIT License](LICENSE).
