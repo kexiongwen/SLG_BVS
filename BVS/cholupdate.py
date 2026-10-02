@@ -27,7 +27,6 @@ def update(R,z):
         c, s = drotg(R[k,k],z[k])
         R[k,:], z[:] = drot(R[k,:],z,c,s,overwrite_x=True,overwrite_y=True)
     
-    R[np.abs(R)<1e-5]=0
     return R
 
 def downdate(R,z):
@@ -44,8 +43,6 @@ def downdate(R,z):
 
         R[k,:], z[:] = ck*R[k,:] - sk*z, -sk*R[k,:] + ck*z
     
-    R[np.abs(R)<1e-5]=0
-
     return R
 
 def downdate_stable(R,z):
@@ -62,8 +59,6 @@ def downdate_stable(R,z):
             z[j] = 1./R[k,k] * (rbar*z[j] - z[k]*R[k,j])
         R[k,k] = rbar
         
-    R[np.abs(R)<1e-5]=0
-
     return R
 
 def chol_del(L,index):
@@ -114,7 +109,7 @@ def chol_add(A,L,index):
         
         #update L12
         
-        L_new[0:index,index]=solve_triangular(L[0:index,0:index].T,A[0:index,index], lower=True)
+        L_new[0:index,index]=solve_triangular(L[0:index,0:index].T,A[0:index,index], lower=True, check_finite=False)
         
         #update L13
         
@@ -145,7 +140,7 @@ def chol_add(A,L,index):
         
         #update L12
         
-        L_new[0:index,index]=solve_triangular(L[0:index,0:index].T,A[0:index,index], lower=True)
+        L_new[0:index,index]=solve_triangular(L[0:index,0:index].T,A[0:index,index], lower=True, check_finite=False)
         
         #update L22
 
@@ -191,7 +186,7 @@ def chol_add_col(v,a,L,index):
     #update L12
 
     if index>0:
-        L_new[0:index,index]=solve_triangular(L[0:index,0:index].T,v[0:index], lower=True)
+        L_new[0:index,index]=solve_triangular(L[0:index,0:index].T,v[0:index], lower=True, check_finite=False)
 
     #update L22
 

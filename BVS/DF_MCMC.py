@@ -24,6 +24,7 @@ def sample_beta(
     beta_sample,
     sigma2_sample,
     sigma2_sum,
+    rng,
 ):
 
     # posterior draws given the current model:
@@ -35,11 +36,18 @@ def sample_beta(
 
     q = (g / (1 + g)) ** 0.5
 
-    sigma2_draw = invgamma.rvs((w + N) / 2) * 0.5 * (w + S * (g / (1 + g)))
+    sigma2_draw = invgamma.rvs((w + N) / 2, random_state=rng) * 0.5 * (
+        w + S * (g / (1 + g))
+    )
 
     beta_draw = q * (
-        q * solve_triangular(L.T, LZ)
-        + solve_triangular(L, np.random.randn(gamma.sum(), 1), lower=True)
+        q * solve_triangular(L.T, LZ, check_finite=False)
+        + solve_triangular(
+            L,
+            rng.standard_normal((gamma.sum(), 1)),
+            lower=True,
+            check_finite=False,
+        )
         * sigma2_draw**0.5
     )
 
@@ -82,16 +90,19 @@ def DF_MCMC(
     # PA,PD,PS: add/delete/swap proposal probabilities; w: prior degrees of
     # freedom for sigma2 in the Sample_beta draws; RB=True: track the
     # Rao-Blackwellized estimate of E[beta|y] (paper sec. 5.2), returned as
-    # stats['beta_rb'] (online) or appended after the trace outputs; it costs
-    # roughly one extra proposal per iteration; gamma_init: iterable of
+    # stats['beta_rb'] (online) or appended after the trace outputs; it
+    # reuses the weight stages computed during the proposal, so it costs at
+    # most one extra stage computation per iteration; gamma_init: iterable of
     # starting columns (working, i.e. possibly screened, coordinates)
     # overriding the random draw of s_initial columns
 
     if abs(PA + PD + PS - 1) > 1e-8:
         raise ValueError("PA, PD and PS must sum to 1")
 
-    if seed is not None:
-        np.random.seed(seed)
+    # all randomness flows from this per-call Generator: results for a given
+    # seed are exactly reproducible and no global numpy.random state is read
+    # or written
+    rng = np.random.default_rng(seed)
 
     Y = np.asarray(Y).reshape(-1, 1)
     N, P0 = np.shape(X)
@@ -133,7 +144,7 @@ def DF_MCMC(
     else:
         for _ in range(100):
             gamma = np.zeros(P, dtype=bool)
-            gamma[np.random.choice(P, s_initial, replace=False)] = 1
+            gamma[rng.choice(P, size=s_initial, replace=False)] = 1
 
             pos = np.flatnonzero(gamma)
 
@@ -152,7 +163,7 @@ def DF_MCMC(
             gamma = np.zeros(P, dtype=bool)
             L = np.zeros((0, 0))
 
-    LZ = solve_triangular(L, XTY[gamma], lower=True)
+    LZ = solve_triangular(L, XTY[gamma], lower=True, check_finite=False)
     S = (1 + 1 / g) * YTY - (LZ**2).sum()
 
     if online:
@@ -195,7 +206,7 @@ def DF_MCMC(
 
         h_a, h_d, h_s = move_prob(s, s0, PA, PD, PS)
 
-        ADS = np.random.choice(3, 1, p=[h_a, h_d, h_s]).item()
+        ADS = int(rng.choice(3, p=[h_a, h_d, h_s]))
 
         if online:
             prop[ADS] += 1
@@ -220,6 +231,8 @@ def DF_MCMC(
             PA,
             PD,
             PS,
+            LZ,
+            rng,
         )
 
         if proposal is None:
@@ -236,16 +249,19 @@ def DF_MCMC(
 
             continue
 
-        gamma_proposal, L_proposal, LZ_proposal, S_proposal, ratio = proposal
+        gamma_proposal, L_proposal, LZ_proposal, S_proposal, ratio, reuse = proposal
 
-        if ratio > 1 or np.random.rand() < ratio:
+        if ratio > 1 or rng.random() < ratio:
             gamma = gamma_proposal
             L = L_proposal
             LZ = LZ_proposal
             S = S_proposal
+            rb_reuse = reuse["post"]
 
             if online:
                 acc[ADS] += 1
+        else:
+            rb_reuse = reuse["pre"]
 
         if online:
             if i >= burn_in:
@@ -272,15 +288,18 @@ def DF_MCMC(
                 beta_sample,
                 sigma2_sample,
                 sigma2_sum,
+                rng,
             )
 
         if RB and i >= burn_in:
-            rb_draw = rb_beta(L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0, p0=P0)
+            rb_draw = rb_beta(
+                L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0, p0=P0, LZ=LZ, **rb_reuse
+            )
 
             if online:
                 rb_sum += rb_draw
             else:
-                rb_sample[:, i - burn_in] = rb_draw
+                rb_sample[:, i] = rb_draw
 
     if online:
         stats = {"n_iter": M, "proposal": prop, "accept": acc}

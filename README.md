@@ -16,6 +16,7 @@ The sampler performs add/delete/swap Metropolis–Hastings moves on the model sp
 | [`BVS/proposal.py`](BVS/proposal.py) | Proposal layer: `weight` (informed thresholded proposal distribution), `move_prob` (move-type probabilities), `chol_full`/`make_delete`/`make_add` (proposal state construction), `propose` (proposal + MH ratio) |
 | [`BVS/cholupdate.py`](BVS/cholupdate.py) | Rank-1 Cholesky primitives: `update`/`downdate`/`chol_del`/`chol_add`/`chol_add_col`, giving $O(s^2)$ cost per move |
 | [`BVS/ESS.py`](BVS/ESS.py) | Effective sample size (ArviZ): `ess`, `ess_gamma`, `ess_beta`, `ess_sigma2`, `ess_from_df_mcmc` |
+| `tests/test_regressions.py` | Regression tests: RB trace-mode alignment against the online estimate, and column-scale invariance against exactly enumerated posteriors (run `python3 -m pytest tests/` or `python3 tests/test_regressions.py`) |
 | `test1.ipynb` | Simulation study of paper §5.1: LIT-MH-1 finding high-posterior models, Table-1 style metrics ($\hat\gamma_{\max}$, $H_{\max}$, $t_{\max}$) |
 | `test2.ipynb` | Simulation study of paper §5.3: multi-modal block-correlated design swept over $\sigma_\beta$ with forward–backward initialization and Table-2 style metrics (local modes, acceptance, ESS of $T_1$/$T_2$ per second) |
 
@@ -94,10 +95,10 @@ Measured on P=20000, N=300 with 10 signals: `screen=500` plus online statistics 
 | `Sample_beta` | False | Draw the conditional posteriors $\sigma^2\sim\mathrm{InvGamma}$ and $\beta\mid\sigma^2$ (g-prior normal) |
 | `online` | False | Online-statistics mode, no trace stored (see below) |
 | `screen` | None | Number of columns kept by marginal screening |
-| `seed` | None | Random seed |
+| `seed` | None | Random seed, consumed by a per-call `numpy.random.default_rng` (no global RNG state is read or written) |
 | `PA, PD, PS` | 0.4/0.4/0.2 | Add/delete/swap proposal probabilities (must sum to 1; at capacity $s_0$ the sampler switches to delete/swap with 1/2 each, and the null model forces adds) |
 | `w` | 0 | Prior degrees of freedom for $\sigma^2$ |
-| `RB` | False | Track the Rao-Blackwellized estimate of $\mathbb{E}[\beta\mid y]$ (paper §5.2); costs roughly one extra proposal per iteration |
+| `RB` | False | Track the Rao-Blackwellized estimate of $\mathbb{E}[\beta\mid y]$ (paper §5.2); reuses the weight stages computed during the proposal, so it costs at most one extra stage computation per iteration |
 | `gamma_init` | None | Iterable of starting columns (working, i.e. possibly screened, coordinates), overriding the random draw of `s_initial` — used e.g. for the forward–backward stepwise initialization of paper §5.3 |
 
 **Return values** (three modes):
@@ -112,8 +113,8 @@ With `RB=True`, the Rao-Blackwellized estimate $\hat\beta_{\mathrm{RB}}$ (paper 
 
 ### Other modules
 
-- `weight(L, gamma, S, ..., ADS, ind=None, p0=None)`: proposal weights and the normalized proposal distribution; `ADS` 0/1/2 selects the add/delete/swap-add stage, `ind` is the variable excluded by a swap, and `p0` is the original p used in the prior (differs from the working column count under screening).
-- `propose(L, gamma, S, ADS, ...)`: one proposal, returning `(gamma', L', LZ', S', ratio)`; returns `None` when the move has no candidate.
+- `weight(L, gamma, S, ..., ADS, ind=None, p0=None, LZ=None)`: proposal weights and the normalized proposal distribution; `ADS` 0/1/2 selects the add/delete/swap-add stage, `ind` is the variable excluded by a swap, `p0` is the original p used in the prior (differs from the working column count under screening), and `LZ` optionally passes the caller-maintained $L^{-1}X_\gamma'y$ to skip re-solving.
+- `propose(L, gamma, S, ADS, ..., LZ=None)`: one proposal, returning `(gamma', L', LZ', S', ratio, reuse)` where `reuse` exposes the weight stages already computed for the pre-move and proposal states (consumed by the Rao-Blackwellized estimator); returns `None` when the move has no candidate.
 - `make_add` / `make_delete`: single-covariate state construction (rank-1 update with fallback).
 - `ess(chains)`: accepts (M,) or (n_chains, M); `ess_from_df_mcmc(result)` digests DF_MCMC's trace outputs directly (the online dict raises — no trace is stored).
 
@@ -131,6 +132,8 @@ With `RB=True`, the Rao-Blackwellized estimate $\hat\beta_{\mathrm{RB}}$ (paper 
 ## Numerical robustness
 
 - All weight computations are vectorized: the add/swap stages obtain every candidate's residual projections from one batched triangular solve, and the delete stage uses the diagonal of $(X_\gamma'X_\gamma)^{-1}$ — roughly two orders of magnitude faster than per-candidate updates.
+- Stage results are pure functions of the model state and are reused wherever possible: a swap evaluates its add-stage neighbourhood once (the forward and reverse exclusions only renormalize the same weights), and the Rao-Blackwellized estimator reuses the stage computed for the current state during the proposal. All reuse is bit-exact, verified by same-seed bit-level regression across sampler modes; scipy triangular solves run with `check_finite=False` on internally computed arrays.
+- All randomness flows from a per-call `numpy.random.default_rng(seed)` instance, passed down to the move-type and candidate draws and (via scipy's `random_state`) to the conditional σ²/β draws — a given seed is exactly reproducible regardless of other `numpy.random` usage in the process.
 - Numerically collinear candidates (residual projection $d_j\le 10^{-12}\,\mathrm{diag}$) get weight zero and never enter a singular model; truncation is applied after the zeroing.
 - Failed rank-1 updates fall back to a full Cholesky; if that also fails the move is recorded as a stay. A collinear initial model is redrawn automatically.
 - When $s_0$ exceeds the rank of the design, proposal stages with no candidates skip as self-loops.
@@ -141,7 +144,7 @@ With `RB=True`, the Rao-Blackwellized estimate $\hat\beta_{\mathrm{RB}}$ (paper 
 - **Proposal ratios**: the MH ratios returned by `propose()` for all three move types agree with independent closed-form computation to ~1e-14 relative error.
 - **Rao-Blackwellized estimator**: `rb_beta` matches the exact two-model formula to 1.8e-15 (including states at capacity $s_0$), and the sampler-averaged `beta_rb` recovers the exactly-enumerated $\mathbb{E}[\beta\mid y]$ to 2e-4.
 - **Degenerate inputs**: exactly duplicated columns, impossible initial sizes, and $s_0$ beyond the design rank all run without crashing.
-- **Consistency**: online statistics exactly match trace statistics; every refactor has passed same-seed bit-level regression.
+- **Consistency**: online statistics exactly match trace statistics; every refactor has passed same-seed bit-level regression (the migration from the legacy global RNG to `numpy.random.default_rng` deliberately changed the random stream, so seeds do not reproduce pre-migration draws).
 
 ## Caveats
 
