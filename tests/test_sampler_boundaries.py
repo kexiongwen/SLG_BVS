@@ -121,6 +121,17 @@ def test_iteration_and_model_size_arguments_are_valid():
         assert_value_error(lambda: DF_MCMC(Y, X, **kw), name)
 
 
+def test_prior_and_screen_arguments_are_valid():
+    Y, X = make_problem()
+    kw = dict(kappa1=1, kappa2=1, s0=2, s_initial=0, M=2, burn_in=0)
+    for value in (0, -1, np.nan):
+        assert_value_error(
+            lambda: DF_MCMC(Y, X, **{**kw, "kappa1": value}), "kappa1")
+    for value in (0, -3, 1.5, True):
+        assert_value_error(
+            lambda: DF_MCMC(Y, X, **{**kw, "screen": value}), "screen")
+
+
 def test_zero_capacity_keeps_only_the_null_model():
     Y, X = make_problem()
     kw = dict(M=5, burn_in=0, seed=3, Sample_beta=True, RB=True)
@@ -139,5 +150,6 @@ if __name__ == "__main__":
     test_initial_model_must_fit_model_space()
     test_initial_model_indices_are_valid()
     test_iteration_and_model_size_arguments_are_valid()
+    test_prior_and_screen_arguments_are_valid()
     test_zero_capacity_keeps_only_the_null_model()
     print("all sampler boundary regression tests passed")

@@ -104,6 +104,14 @@ def DF_MCMC(
                 or not isinstance(value, (int, np.integer)) or value < minimum):
             raise ValueError(f"{name} must be an integer >= {minimum}")
 
+    if not np.isfinite(kappa1) or kappa1 <= 0:
+        raise ValueError("kappa1 must be positive")
+
+    if (screen is not None
+            and (isinstance(screen, (bool, np.bool_))
+                 or not isinstance(screen, (int, np.integer)) or screen < 1)):
+        raise ValueError("screen must be a positive integer")
+
     # all randomness flows from this per-call Generator: results for a given
     # seed are exactly reproducible and no global numpy.random state is read
     # or written

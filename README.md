@@ -93,7 +93,7 @@ Measured on P=20000, N=300 with 10 signals: `screen=500` plus online statistics 
 | `M`, `burn_in` | 10000 | Positive integer kept-sample count and non-negative integer burn-in count; with `burn_in=0`, the initial state is the first complete retained sample |
 | `Sample_beta` | False | Draw the conditional posteriors $\sigma^2\sim\mathrm{InvGamma}$ and $\beta\mid\sigma^2$ (g-prior normal) |
 | `online` | False | Online-statistics mode, no trace stored (see below) |
-| `screen` | None | Number of columns kept by marginal screening |
+| `screen` | None | Positive integer: number of columns kept by marginal screening |
 | `seed` | None | Random seed, consumed by a per-call `numpy.random.default_rng` (no global RNG state is read or written) |
 | `PA, PD, PS` | 0.4/0.4/0.2 | Add/delete/swap proposal probabilities (must sum to 1; at capacity $s_0$ the sampler switches to delete/swap with 1/2 each, and the null model forces adds) |
 | `w` | 0 | Prior degrees of freedom for $\sigma^2$ |

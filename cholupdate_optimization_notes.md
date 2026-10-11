@@ -2,9 +2,11 @@
 
 日期：2026-10-11
 
-审查对象：[BVS/cholupdate.py](BVS/cholupdate.py)，以及 [BVS/proposal.py](BVS/proposal.py) 中的调用方式。
+审查对象：`BVS/cholupdate.py`（已退役，见下文状态），以及 [BVS/proposal.py](BVS/proposal.py) 中的调用方式。
 
-本文记录优化建议和已完成的微基准结果；尚未将这些建议应用到采样实现。
+本文记录优化建议和已完成的微基准结果。
+
+**状态更新（2026-10-11）**：建议 1 已实施——`make_add()` / `make_delete()` 现采用完整 Cholesky 重构（保留末尾删除快速路径），`BVS/cholupdate.py` 已从包中移除；退役内核保留在 [基线归档](benchmarks/baselines/before_optimizations.zip) 中，供 [benchmarks/review_cholesky.py](benchmarks/review_cholesky.py) 和优化契约测试继续使用。建议 2–4 针对已移除的增量内核，不再适用。
 
 ## 总体建议
 
