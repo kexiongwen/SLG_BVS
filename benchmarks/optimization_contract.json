@@ -1,0 +1,48 @@
+{
+  "claim_id": "C_SAMPLER_FIRST_THREE_OPTIMIZATIONS",
+  "mathematics": {
+    "assertion_tested": "Compare elapsed time and memory of the corrected pre-optimization sampler and the optimized sampler on four fixed seeded workloads.",
+    "coefficient_domain": "IEEE 754 float64 NumPy arrays; Boolean model indicators",
+    "conventions": "DF_MCMC timings include Gram construction and sampling, exclude input generation and output hashing. Timing and memory instrumentation use separate subprocesses. Memory includes actual ndarray backing allocations, not just visible slice sizes.",
+    "inputs": ["Seeded independent and block-correlated Gaussian design matrices defined by benchmarks/compare_optimizations.py"],
+    "bounds": {
+      "cases": ["strong_signal", "weak_signal", "correlated_competitors", "trace_heavy"],
+      "N": 250,
+      "P": [800, 2000],
+      "retained_samples": [1500, 2000],
+      "burn_in": [500, 2000],
+      "maximum_model_size": 30,
+      "timing_repeats_per_variant_case": 5,
+      "warmups_per_timing_worker": 1,
+      "memory_calls_per_variant_case": 1,
+      "BLAS_threads": 1,
+      "worker_wall_timeout_seconds": 180
+    },
+    "non_claims": [
+      "No universal runtime or memory improvement across machines, dimensions, data or sampler options.",
+      "This is not a mixing-time or convergence test and does not establish multimodality.",
+      "Identical seeds and finite regression tests do not guarantee identical model paths at every floating-point acceptance boundary.",
+      "OS peak working set includes interpreter, imports and inputs; tracemalloc covers tracked allocations after input generation and is a different measurement."
+    ]
+  },
+  "execution_artifacts": [
+    "benchmarks/compare_optimizations.py",
+    "benchmarks/baselines/before_optimizations.zip",
+    "BVS/__init__.py",
+    "BVS/DF_MCMC.py",
+    "BVS/proposal.py",
+    "BVS/cholupdate.py",
+    "BVS/ESS.py"
+  ],
+  "software": [
+    {"name": "Python (Anaconda)", "version": "3.14.7"},
+    {"name": "NumPy", "version": "2.5.3"},
+    {"name": "SciPy", "version": "1.18.1"},
+    {"name": "threadpoolctl", "version": "3.5.0"}
+  ],
+  "randomness": {
+    "used": true,
+    "generator": "numpy.random.default_rng (PCG64); separate fixed seeds for data and sampler",
+    "seed": {"data": 2871, "sampler": 9137}
+  }
+}

@@ -1,0 +1,349 @@
+strong_signal: baseline speed
+strong_signal: optimized speed
+strong_signal: baseline memory
+strong_signal: optimized memory
+weak_signal: optimized speed
+weak_signal: baseline speed
+weak_signal: optimized memory
+weak_signal: baseline memory
+correlated_competitors: baseline speed
+correlated_competitors: optimized speed
+correlated_competitors: baseline memory
+correlated_competitors: optimized memory
+trace_heavy: optimized speed
+trace_heavy: baseline speed
+trace_heavy: optimized memory
+trace_heavy: baseline memory
+{
+  "strong_signal": {
+    "variants": {
+      "baseline": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 0.8746910000008938,
+        "min_wall_seconds": 0.863460300000952,
+        "max_wall_seconds": 0.8964179000013246,
+        "raw_wall_seconds": [
+          0.8964179000013246,
+          0.8746910000008938,
+          0.863460300000952,
+          0.869250199999442,
+          0.8909349000005022
+        ],
+        "model_summary": {
+          "retained_draws": 1500,
+          "unique_models": 990,
+          "mean_size": 8.348666666666666,
+          "signal_pip": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "proposals": [
+            805.0,
+            798.0,
+            396.0
+          ],
+          "accepted": [
+            606.0,
+            600.0,
+            364.0
+          ]
+        },
+        "output_backing_array_bytes": 12848,
+        "output_logical_array_bytes": 12848,
+        "tracemalloc_peak_bytes": 5730375,
+        "os_peak_rss_bytes": 115273728
+      },
+      "optimized": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 0.6629730999993626,
+        "min_wall_seconds": 0.6588535999999294,
+        "max_wall_seconds": 0.6730133000000933,
+        "raw_wall_seconds": [
+          0.6629730999993626,
+          0.6588535999999294,
+          0.6730133000000933,
+          0.6662469000002602,
+          0.6603187999990041
+        ],
+        "model_summary": {
+          "retained_draws": 1500,
+          "unique_models": 990,
+          "mean_size": 8.348666666666666,
+          "signal_pip": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "proposals": [
+            805.0,
+            798.0,
+            396.0
+          ],
+          "accepted": [
+            606.0,
+            600.0,
+            364.0
+          ]
+        },
+        "output_backing_array_bytes": 12848,
+        "output_logical_array_bytes": 12848,
+        "tracemalloc_peak_bytes": 5777154,
+        "os_peak_rss_bytes": 114847744
+      }
+    },
+    "exact_result_hashes_match": true,
+    "input_hashes_match": true,
+    "baseline_over_optimized_median_speed_ratio": 1.3193461393859491,
+    "output_backing_array_bytes_reduction_fraction": 0.0,
+    "tracemalloc_peak_bytes_reduction_fraction": -0.008163340095543425,
+    "os_peak_rss_bytes_reduction_fraction": 0.003695412713641044
+  },
+  "weak_signal": {
+    "variants": {
+      "baseline": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 0.9335166000000754,
+        "min_wall_seconds": 0.9297678000002634,
+        "max_wall_seconds": 0.9456398999991507,
+        "raw_wall_seconds": [
+          0.9456398999991507,
+          0.9413803000006737,
+          0.9304009000006772,
+          0.9335166000000754,
+          0.9297678000002634
+        ],
+        "model_summary": {
+          "retained_draws": 1500,
+          "unique_models": 763,
+          "mean_size": 29.566666666666666,
+          "signal_pip": [
+            0.6326666666666667,
+            0.6406666666666667,
+            0.4673333333333333,
+            0.818,
+            1.0
+          ],
+          "proposals": [
+            258.0,
+            911.0,
+            830.0
+          ],
+          "accepted": [
+            231.0,
+            206.0,
+            590.0
+          ]
+        },
+        "output_backing_array_bytes": 6448,
+        "output_logical_array_bytes": 6448,
+        "tracemalloc_peak_bytes": 6401374,
+        "os_peak_rss_bytes": 117657600
+      },
+      "optimized": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 0.7889336000007461,
+        "min_wall_seconds": 0.782408499999292,
+        "max_wall_seconds": 0.8060928000013519,
+        "raw_wall_seconds": [
+          0.8060928000013519,
+          0.782408499999292,
+          0.7889336000007461,
+          0.7855498999997508,
+          0.7906364999998914
+        ],
+        "model_summary": {
+          "retained_draws": 1500,
+          "unique_models": 763,
+          "mean_size": 29.566666666666666,
+          "signal_pip": [
+            0.6326666666666667,
+            0.6406666666666667,
+            0.4673333333333333,
+            0.818,
+            1.0
+          ],
+          "proposals": [
+            258.0,
+            911.0,
+            830.0
+          ],
+          "accepted": [
+            231.0,
+            206.0,
+            590.0
+          ]
+        },
+        "output_backing_array_bytes": 6448,
+        "output_logical_array_bytes": 6448,
+        "tracemalloc_peak_bytes": 6404164,
+        "os_peak_rss_bytes": 116760576
+      }
+    },
+    "exact_result_hashes_match": true,
+    "input_hashes_match": true,
+    "baseline_over_optimized_median_speed_ratio": 1.1832638386794434,
+    "output_backing_array_bytes_reduction_fraction": 0.0,
+    "tracemalloc_peak_bytes_reduction_fraction": -0.0004358439297562633,
+    "os_peak_rss_bytes_reduction_fraction": 0.007624020887728511
+  },
+  "correlated_competitors": {
+    "variants": {
+      "baseline": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 0.8873125000009168,
+        "min_wall_seconds": 0.8764687000002596,
+        "max_wall_seconds": 0.8942947999985336,
+        "raw_wall_seconds": [
+          0.8883583000006183,
+          0.8942947999985336,
+          0.8873125000009168,
+          0.8764687000002596,
+          0.8824051999999938
+        ],
+        "model_summary": {
+          "retained_draws": 1500,
+          "unique_models": 961,
+          "mean_size": 8.063333333333333,
+          "signal_pip": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "proposals": [
+            777.0,
+            804.0,
+            418.0
+          ],
+          "accepted": [
+            582.0,
+            580.0,
+            374.0
+          ]
+        },
+        "output_backing_array_bytes": 12848,
+        "output_logical_array_bytes": 12848,
+        "tracemalloc_peak_bytes": 5737550,
+        "os_peak_rss_bytes": 115412992
+      },
+      "optimized": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 0.6610181000014563,
+        "min_wall_seconds": 0.6510297000004357,
+        "max_wall_seconds": 0.6742662999986351,
+        "raw_wall_seconds": [
+          0.6742662999986351,
+          0.6610181000014563,
+          0.6510297000004357,
+          0.6604234999995242,
+          0.6652701999992132
+        ],
+        "model_summary": {
+          "retained_draws": 1500,
+          "unique_models": 961,
+          "mean_size": 8.063333333333333,
+          "signal_pip": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "proposals": [
+            777.0,
+            804.0,
+            418.0
+          ],
+          "accepted": [
+            582.0,
+            580.0,
+            374.0
+          ]
+        },
+        "output_backing_array_bytes": 12848,
+        "output_logical_array_bytes": 12848,
+        "tracemalloc_peak_bytes": 5778282,
+        "os_peak_rss_bytes": 114376704
+      }
+    },
+    "exact_result_hashes_match": true,
+    "input_hashes_match": true,
+    "baseline_over_optimized_median_speed_ratio": 1.3423422142282668,
+    "output_backing_array_bytes_reduction_fraction": 0.0,
+    "tracemalloc_peak_bytes_reduction_fraction": -0.007099197392615331,
+    "os_peak_rss_bytes_reduction_fraction": 0.008978954466408728
+  },
+  "trace_heavy": {
+    "variants": {
+      "baseline": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 2.4646649999995134,
+        "min_wall_seconds": 2.4345101000017166,
+        "max_wall_seconds": 2.537066799999593,
+        "raw_wall_seconds": [
+          2.4345101000017166,
+          2.4383584999995946,
+          2.4706050000004325,
+          2.4646649999995134,
+          2.537066799999593
+        ],
+        "model_summary": {
+          "retained_draws": 2000,
+          "mean_size": 8.8155,
+          "signal_pip": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "output_backing_array_bytes": 136032000,
+        "output_logical_array_bytes": 68016000,
+        "tracemalloc_peak_bytes": 168737487,
+        "os_peak_rss_bytes": 197505024
+      },
+      "optimized": {
+        "speed_repeats": 5,
+        "median_wall_seconds": 2.1818954999998823,
+        "min_wall_seconds": 2.0594462000008207,
+        "max_wall_seconds": 3.045302799999263,
+        "raw_wall_seconds": [
+          2.1818954999998823,
+          3.045302799999263,
+          2.361752799999522,
+          2.0594462000008207,
+          2.138359299999138
+        ],
+        "model_summary": {
+          "retained_draws": 2000,
+          "mean_size": 8.8155,
+          "signal_pip": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "output_backing_array_bytes": 68016000,
+        "output_logical_array_bytes": 68016000,
+        "tracemalloc_peak_bytes": 100819082,
+        "os_peak_rss_bytes": 184881152
+      }
+    },
+    "exact_result_hashes_match": true,
+    "input_hashes_match": true,
+    "baseline_over_optimized_median_speed_ratio": 1.129598094867351,
+    "output_backing_array_bytes_reduction_fraction": 0.5,
+    "tracemalloc_peak_bytes_reduction_fraction": 0.4025092835476446,
+    "os_peak_rss_bytes_reduction_fraction": 0.0639167133287708
+  }
+}
+Results: C:\Users\kexio\Documents\GitHub\SLG_BVS\benchmarks\results\optimizations-2026-10-11\comparison.json

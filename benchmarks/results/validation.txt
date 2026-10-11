@@ -1,0 +1,17 @@
+Running tests\test_ess_regressions.py
+all ESS regression tests passed
+Running tests\test_notebook_regressions.py
+all notebook regression tests passed
+Running tests\test_optimization_contracts.py
+all optimization contract tests passed
+Running tests\test_proposal_regressions.py
+all proposal regression tests passed
+Running tests\test_rb_regressions.py
+all RB regression tests passed
+Running tests\test_regressions.py
+all regression tests passed
+Running tests\test_sampler_boundaries.py
+all sampler boundary regression tests passed
+Running tests\test_stage_cache.py
+all stage-cache tests passed
+32 tests in 8 scripts passed; elapsed 12.062 seconds

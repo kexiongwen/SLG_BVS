@@ -43,9 +43,8 @@ def sample_beta(
     beta_draw = q * (
         q * solve_triangular(L.T, LZ, check_finite=False)
         + solve_triangular(
-            L,
+            L.T,
             rng.standard_normal((gamma.sum(), 1)),
-            lower=True,
             check_finite=False,
         )
         * sigma2_draw**0.5
@@ -85,19 +84,25 @@ def DF_MCMC(
 
     # online=True: return online sufficient statistics (pip, model counts,
     # beta/sigma2 summaries, acceptance counts) instead of storing the full
-    # (P x total_iters) trace; screen=m: restrict the search to the top m
+    # (P x M) retained trace; screen=m: restrict the search to the top m
     # columns ranked by marginal |x_j'y|/||x_j|| (paper eq. (11));
     # PA,PD,PS: add/delete/swap proposal probabilities; w: prior degrees of
     # freedom for sigma2 in the Sample_beta draws; RB=True: track the
     # Rao-Blackwellized estimate of E[beta|y] (paper sec. 5.2), returned as
     # stats['beta_rb'] (online) or appended after the trace outputs; it
-    # reuses the weight stages computed during the proposal, so it costs at
-    # most one extra stage computation per iteration; gamma_init: iterable of
+    # reuses available weight stages computed during the proposal;
+    # gamma_init: iterable of
     # starting columns (working, i.e. possibly screened, coordinates)
     # overriding the random draw of s_initial columns
 
     if abs(PA + PD + PS - 1) > 1e-8:
         raise ValueError("PA, PD and PS must sum to 1")
+
+    for name, value, minimum in (("M", M, 1), ("burn_in", burn_in, 0),
+                                  ("s0", s0, 0)):
+        if (isinstance(value, (bool, np.bool_))
+                or not isinstance(value, (int, np.integer)) or value < minimum):
+            raise ValueError(f"{name} must be an integer >= {minimum}")
 
     # all randomness flows from this per-call Generator: results for a given
     # seed are exactly reproducible and no global numpy.random state is read
@@ -128,9 +133,18 @@ def DF_MCMC(
     # diag(L)^2 to clear a tolerance relative to the Gram scale -- falling
     # back to the null model (whose empty factor is handled throughout)
     if gamma_init is not None:
+        initial_indices = np.asarray(list(gamma_init))
+        if (initial_indices.ndim != 1
+                or (initial_indices.size
+                    and not np.issubdtype(initial_indices.dtype, np.integer))):
+            raise ValueError("gamma_init must contain integer column indices")
+        if np.any(initial_indices < 0) or np.any(initial_indices >= P):
+            raise ValueError("gamma_init column indices must be in [0, P)")
         gamma = np.zeros(P, dtype=bool)
-        gamma[np.asarray(list(gamma_init), dtype=int)] = 1
+        gamma[initial_indices.astype(np.intp)] = 1
         pos = np.flatnonzero(gamma)
+        if pos.size > s0:
+            raise ValueError("gamma_init model size must not exceed s0")
 
         if pos.size == 0:
             L = np.zeros((0, 0))
@@ -142,6 +156,10 @@ def DF_MCMC(
             if (np.diag(L) ** 2).min() <= 1e-10 * np.diag(XTX)[pos].max():
                 raise ValueError("gamma_init gives a singular model")
     else:
+        if (isinstance(s_initial, (bool, np.bool_))
+                or not isinstance(s_initial, (int, np.integer))
+                or not 0 <= s_initial <= min(s0, P)):
+            raise ValueError("s_initial must be an integer in [0, min(s0, P)]")
         for _ in range(100):
             gamma = np.zeros(P, dtype=bool)
             gamma[rng.choice(P, size=s_initial, replace=False)] = 1
@@ -183,85 +201,78 @@ def DF_MCMC(
             rb_sum = np.zeros(P)
 
     else:
-        gamma_sample = np.zeros((P, M + burn_in), dtype=bool)
-        gamma_sample[:, 0] = gamma
+        # Burn-in states are never retained, so allocate only the M output
+        # columns. Returning these buffers also avoids retaining sliced bases.
+        gamma_sample = np.empty((P, M), dtype=bool)
 
         if Sample_beta:
-            beta_sample = np.zeros((P, M + burn_in))
-            sigma2_sample = np.ones(M + burn_in)
+            beta_sample = np.zeros((P, M))
+            sigma2_sample = np.empty(M)
             beta_sum = None
             beta_sq = None
             sigma2_sum = 0.0
 
         if RB:
-            rb_sample = np.zeros((P, M + burn_in))
-            rb_sample[:, 0] = rb_beta(
-                L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0, p0=P0
+            rb_sample = np.empty((P, M))
+
+    # Keep only the current state's deterministic stages. Rejections reuse
+    # them, while acceptance replaces the cache with the proposal's stages.
+    state_cache = {}
+
+    # Index zero is the initial state. With no burn-in, it contributes a
+    # complete posterior sample in both trace and online modes.
+
+    for i in range(M + burn_in):
+        proposal = None
+        if i > 0 and s0 > 0:
+            s = gamma.sum()
+
+            h_a, h_d, h_s = move_prob(s, s0, PA, PD, PS)
+
+            ADS = int(rng.choice(3, p=[h_a, h_d, h_s]))
+
+            if online:
+                prop[ADS] += 1
+
+            proposal = propose(
+                L,
+                gamma,
+                S,
+                ADS,
+                s,
+                s0,
+                h_a,
+                h_d,
+                XTX,
+                XTY,
+                YTY,
+                g,
+                kappa,
+                N,
+                P,
+                P0,
+                PA,
+                PD,
+                PS,
+                LZ,
+                rng,
+                cache=state_cache,
             )
 
-    # MCMC loop
+        # An unavailable move is a self-loop. It still contributes all
+        # posterior samples, with RB stages computed from the unchanged state.
+        if proposal is not None:
+            gamma_proposal, L_proposal, LZ_proposal, S_proposal, ratio, reuse = proposal
 
-    for i in range(1, M + burn_in):
-        s = gamma.sum()
+            if ratio > 1 or rng.random() < ratio:
+                gamma = gamma_proposal
+                L = L_proposal
+                LZ = LZ_proposal
+                S = S_proposal
+                state_cache = reuse["post"]["cache"]
 
-        h_a, h_d, h_s = move_prob(s, s0, PA, PD, PS)
-
-        ADS = int(rng.choice(3, p=[h_a, h_d, h_s]))
-
-        if online:
-            prop[ADS] += 1
-
-        proposal = propose(
-            L,
-            gamma,
-            S,
-            ADS,
-            s,
-            s0,
-            h_a,
-            h_d,
-            XTX,
-            XTY,
-            YTY,
-            g,
-            kappa,
-            N,
-            P,
-            P0,
-            PA,
-            PD,
-            PS,
-            LZ,
-            rng,
-        )
-
-        if proposal is None:
-            # the requested move type has no candidate: record the unchanged
-            # state and skip the move
-
-            if online:
-                if i >= burn_in:
-                    pip_count += gamma
-                    mkey = tuple(np.flatnonzero(gamma))
-                    model_counts[mkey] = model_counts.get(mkey, 0) + 1
-            else:
-                gamma_sample[:, i] = gamma
-
-            continue
-
-        gamma_proposal, L_proposal, LZ_proposal, S_proposal, ratio, reuse = proposal
-
-        if ratio > 1 or rng.random() < ratio:
-            gamma = gamma_proposal
-            L = L_proposal
-            LZ = LZ_proposal
-            S = S_proposal
-            rb_reuse = reuse["post"]
-
-            if online:
-                acc[ADS] += 1
-        else:
-            rb_reuse = reuse["pre"]
+                if online:
+                    acc[ADS] += 1
 
         if online:
             if i >= burn_in:
@@ -269,8 +280,8 @@ def DF_MCMC(
                 mkey = tuple(np.flatnonzero(gamma))
                 model_counts[mkey] = model_counts.get(mkey, 0) + 1
 
-        else:
-            gamma_sample[:, i] = gamma
+        elif i >= burn_in:
+            gamma_sample[:, i - burn_in] = gamma
 
         if Sample_beta and i >= burn_in:
             sigma2_sum = sample_beta(
@@ -278,7 +289,7 @@ def DF_MCMC(
                 LZ,
                 S,
                 gamma,
-                i,
+                i - burn_in,
                 g,
                 N,
                 w,
@@ -293,13 +304,14 @@ def DF_MCMC(
 
         if RB and i >= burn_in:
             rb_draw = rb_beta(
-                L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0, p0=P0, LZ=LZ, **rb_reuse
+                L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0,
+                p0=P0, LZ=LZ, cache=state_cache,
             )
 
             if online:
                 rb_sum += rb_draw
             else:
-                rb_sample[:, i] = rb_draw
+                rb_sample[:, i - burn_in] = rb_draw
 
     if online:
         stats = {"n_iter": M, "proposal": prop, "accept": acc}
@@ -345,18 +357,14 @@ def DF_MCMC(
         return stats
 
     if Sample_beta:
-        result = [
-            beta_sample[:, burn_in:],
-            gamma_sample[:, burn_in:],
-            sigma2_sample[burn_in:],
-        ]
+        result = [beta_sample, gamma_sample, sigma2_sample]
 
         if RB:
-            result.append(rb_sample[:, burn_in:])
+            result.append(rb_sample)
     else:
-        result = gamma_sample[:, burn_in:]
+        result = gamma_sample
 
         if RB:
-            result = [gamma_sample[:, burn_in:], rb_sample[:, burn_in:]]
+            result = [gamma_sample, rb_sample]
 
     return result

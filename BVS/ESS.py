@@ -74,21 +74,37 @@ def ess_sigma2(sigma2_sample, method="bulk"):
 def ess_from_df_mcmc(result, method_beta="bulk", method_gamma="mean"):
 
     #ESS summary from a DF_MCMC return value: the online stats dict stores
-    #no trace and raises; the trace-mode outputs (gamma only, or the
-    #[beta_sample, gamma_sample, sigma2_sample] triple) are both handled.
+    #no trace and raises. Trace outputs contain gamma alone, [gamma, RB],
+    #[beta, gamma, sigma2], or [beta, gamma, sigma2, RB]. RB traces use the
+    #coefficient method and are reported separately under "beta_rb".
     #Note that under screening the trace is in screened coordinates
 
     if isinstance(result, dict):
         raise ValueError("ESS needs the stored trace: run DF_MCMC with online=False")
 
     out = {}
+    rb_sample = None
 
     if isinstance(result, (list, tuple)):
-        beta_sample, gamma_sample, sigma2_sample = result
-        out["beta"] = ess_beta(beta_sample, method=method_beta)
-        out["sigma2"] = ess_sigma2(sigma2_sample, method=method_beta)
-        out["gamma"] = ess_gamma(gamma_sample, method=method_gamma)
+        if len(result) == 2:
+            gamma_sample, rb_sample = result
+        elif len(result) in (3, 4):
+            beta_sample, gamma_sample, sigma2_sample = result[:3]
+            out["beta"] = ess_beta(beta_sample, method=method_beta)
+            out["sigma2"] = ess_sigma2(sigma2_sample, method=method_beta)
+            if len(result) == 4:
+                rb_sample = result[3]
+        else:
+            raise ValueError(
+                "DF_MCMC trace lists must contain 2, 3, or 4 arrays: "
+                "[gamma, beta_rb], [beta, gamma, sigma2], or "
+                "[beta, gamma, sigma2, beta_rb]"
+            )
     else:
-        out["gamma"] = ess_gamma(result, method=method_gamma)
+        gamma_sample = result
+
+    out["gamma"] = ess_gamma(gamma_sample, method=method_gamma)
+    if rb_sample is not None:
+        out["beta_rb"] = ess_beta(rb_sample, method=method_beta)
 
     return out

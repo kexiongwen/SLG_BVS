@@ -4,12 +4,13 @@
 #(chol_full, make_delete, make_add), and the per-move proposal with its MH
 #acceptance ratio (propose). The weight computation is split into per-move-type
 #stages (_del_stage, _add_stage) whose results are pure functions of the model
-#state: propose() reuses one add-stage computation for both swap exclusions,
-#and the Rao-Blackwellized estimator (rb_beta) reuses the stages already
-#computed for the current state in the same iteration
+#state: a bounded cache retains the current model's stages across rejections.
+#Swap exclusions share one add stage, and rb_beta reuses these stages and
+#caches its deterministic conditional mean (never posterior random draws).
 import numpy as np
 from numpy.linalg import cholesky
 from scipy.linalg import solve_triangular
+from scipy.special import expit
 
 try:  # importable both as package (BVS.proposal) and as flat module
     from .cholupdate import chol_add_col, chol_del
@@ -51,37 +52,105 @@ def _exclude_normalize(trunc, ind):
     return _normalize(t)
 
 
+def _excluded_probability(trunc, total, excluded, candidate):
+
+    # Only this scalar is needed for the reverse half of a swap. Re-sum the
+    # remaining entries if subtraction would cancel a dominant weight.
+    if candidate == excluded or trunc[candidate] == 0:
+        return 0.0
+    remaining = total - trunc[excluded]
+    if remaining <= 1e-8 * total:
+        remaining = trunc[:excluded].sum() + trunc[excluded + 1 :].sum()
+    return trunc[candidate] / remaining if remaining > 0 else 0.0
+
+
+def _bind_cache(cache, L, gamma, S, g, kappa, N, XTY, YTY, XTX, p0, s0):
+
+    # Cache inputs are immutable for the lifetime of a model in DF_MCMC.
+    # Object identity avoids hashing/comparing the full Gram matrix on every
+    # iteration. External callers modifying these arrays in place must clear
+    # their cache first. Retaining these references also prevents id reuse.
+    if cache is None:
+        cache = {}
+    arrays = (L, gamma, XTY, XTX)
+    parameters = (S, g, kappa, N, YTY, p0, s0)
+    previous = cache.get("arrays")
+    if (
+        previous is None
+        or any(old is not new for old, new in zip(previous, arrays))
+        or cache.get("parameters") != parameters
+    ):
+        cache.clear()
+        cache.update(arrays=arrays, parameters=parameters, pos=np.flatnonzero(gamma))
+    return cache
+
+
+def _cached_lz(cache, L, XTY, LZ):
+
+    if "LZ" not in cache:
+        cache["LZ"] = (
+            np.asarray(LZ).ravel()
+            if LZ is not None
+            else solve_triangular(
+                L, np.asarray(XTY).ravel()[cache["pos"]], lower=True, check_finite=False
+            )
+        )
+    return cache["LZ"]
+
+
+def _del_compact(L, pos, S, kappa, N, XTY, p0, LZ=None, coefficients=None):
+
+    # The hot path stores only the s actual deletion candidates. The public
+    # dense wrapper below expands these values for backward compatibility.
+    if pos.size == 0:
+        empty = np.empty(0)
+        return empty, empty.copy(), empty.copy()
+    z = (
+        solve_triangular(L, np.asarray(XTY).ravel()[pos], lower=True, check_finite=False)
+        if LZ is None else np.asarray(LZ).ravel()
+    )
+    h = (
+        solve_triangular(L.T, z, check_finite=False)
+        if coefficients is None else coefficients
+    )
+    c = (solve_triangular(L, np.identity(pos.size), lower=True, check_finite=False) ** 2).sum(axis=0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        fit = np.where(c > 0, (h**2) / c, 0.0)
+    raw = (p0**kappa) * (S / (S + fit)) ** (N / 2)
+    return raw, np.maximum(np.minimum(raw, 1), 1 / p0), h
+
+
+def _cached_delete(cache, L, S, kappa, N, XTY, p0, LZ):
+
+    if "delete" not in cache:
+        z = _cached_lz(cache, L, XTY, LZ)
+        raw, trunc, h = _del_compact(
+            L, cache["pos"], S, kappa, N, XTY, p0, z, cache.get("coefficients")
+        )
+        cache["coefficients"] = h
+        cache["delete"] = (raw, trunc, _normalize(trunc))
+    return cache["delete"]
+
+
+def _delete_probability(cache, variable):
+
+    pos = cache["pos"]
+    index = np.searchsorted(pos, variable)
+    return cache["delete"][2][index] if index < pos.size and pos[index] == variable else 0.0
+
+
 def _del_stage(L, gamma, S, g, kappa, N, XTY, p0, LZ=None):
 
     # delete-stage weights: raw B(gamma, gamma\{k}) for k in gamma (0
     # elsewhere) and the truncated copy clipped to [1/p0, 1]; LZ is the
     # caller-maintained L^{-1} X_gamma'y, reused instead of re-solved
 
-    XTY = np.asarray(XTY).ravel()
-    P = XTY.shape[0]
-
+    P = np.asarray(XTY).size
+    pos = np.flatnonzero(gamma)
+    raw, trunc, _ = _del_compact(L, pos, S, kappa, N, XTY, p0, LZ)
     weight = np.zeros(P)
     trunc_weight = np.zeros(P)
-
-    if np.any(gamma):
-        if LZ is None:
-            z = solve_triangular(L, XTY[gamma], lower=True, check_finite=False)
-        else:
-            z = np.asarray(LZ).ravel()
-        h = solve_triangular(L.T, z, check_finite=False)
-        c = (
-            solve_triangular(
-                L, np.identity(np.shape(L)[0]), lower=True, check_finite=False
-            )
-            ** 2
-        ).sum(axis=0)
-
-        with np.errstate(divide="ignore", invalid="ignore"):
-            fit = np.where(c > 0, (h**2) / c, 0.0)
-
-        weight[gamma] = (p0**kappa) * (S / (S + fit)) ** (N / 2)
-        trunc_weight[gamma] = np.maximum(np.minimum(weight[gamma], 1), 1 / p0)
-
+    weight[pos], trunc_weight[pos] = raw, trunc
     return weight, trunc_weight
 
 
@@ -114,17 +183,44 @@ def _add_stage(L, gamma, S, g, kappa, N, XTY, XTX, p0, LZ=None):
     # model is never proposed
     ok = d > 1e-12 * dg
 
+    weight, trunc_weight = _add_weights(gamma, S, kappa, N, p0, u, d, ok)
+    return weight, trunc_weight, u, d, ok
+
+
+def _add_weights(gamma, S, kappa, N, p0, u, d, ok):
+
     with np.errstate(divide="ignore", invalid="ignore"):
         r = np.where(ok, (u**2) / (d * S), 0.0)
     r = np.minimum(r, 1 - 1e-12)
 
-    weight = np.where(ok, (1 - r) ** (-N / 2) / (p0**kappa), 0.0)
+    # Very large raw Bayes factors may overflow to infinity; clipping below
+    # still gives finite proposal weights, and swap ratios use log residuals.
+    with np.errstate(over="ignore"):
+        weight = np.where(ok, (1 - r) ** (-N / 2) / (p0**kappa), 0.0)
     weight[gamma] = 0
 
     trunc_weight = np.where(ok, np.maximum(np.minimum(weight, p0), 1 / p0), 0.0)
     trunc_weight[gamma] = 0
 
-    return weight, trunc_weight, u, d, ok
+    return weight, trunc_weight
+
+
+def _cached_add(cache, L, gamma, S, g, kappa, N, XTY, XTX, p0, LZ):
+
+    if "add" not in cache:
+        if "add_uv" in cache:
+            u, d, ok = cache["add_uv"]
+            raw, trunc = _add_weights(gamma, S, kappa, N, p0, u, d, ok)
+        else:
+            z = _cached_lz(cache, L, XTY, LZ)
+            raw, trunc, u, d, ok = _add_stage(
+                L, gamma, S, g, kappa, N, XTY, XTX, p0, LZ=z
+            )
+            cache["add_uv"] = (u, d, ok)
+        total = trunc.sum()
+        probability = trunc / total if total > 0 else trunc.copy()
+        cache["add"] = (raw, trunc, probability, total)
+    return cache["add"]
 
 
 def weight(L, gamma, S, g, kappa, N, XTY, YTY, XTX, ADS, ind=None, p0=None, LZ=None):
@@ -153,7 +249,8 @@ def weight(L, gamma, S, g, kappa, N, XTY, YTY, XTX, ADS, ind=None, p0=None, LZ=N
 
 
 def rb_beta(
-    L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0, p0=None, LZ=None, del_w=None, add_uv=None
+    L, gamma, S, g, kappa, N, XTY, YTY, XTX, s0, p0=None, LZ=None, del_w=None, add_uv=None,
+    cache=None,
 ):
 
     # Rao-Blackwellized conditional posterior mean E[beta_j | gamma_{-j}, y]
@@ -166,59 +263,54 @@ def rb_beta(
     # so out-of-model coordinates are 0
 
     P = gamma.shape[0]
-    XTY_r = np.asarray(XTY).ravel()
 
     if p0 is None:
         p0 = P
+
+    cache = _bind_cache(cache, L, gamma, S, g, kappa, N, XTY, YTY, XTX, p0, s0)
+    if "rb" in cache:
+        # Preserve the public result's mutability without exposing the stored
+        # value to accidental edits by callers.
+        return cache["rb"].copy()
 
     q2 = g / (1 + g)
     out = np.zeros(P)
 
     # in-model coordinates: E[beta_j | gamma_{-j}, y] = mu_j / (1 + B(gamma, gamma\{j}))
-    pos = np.flatnonzero(gamma)
+    pos = cache["pos"]
 
     if pos.size:
         if del_w is None:
-            del_w, _ = _del_stage(L, gamma, S, g, kappa, N, XTY_r, p0)
-        if LZ is None:
-            LZ = solve_triangular(L, XTY_r[pos], lower=True, check_finite=False)
-        mu = q2 * solve_triangular(L.T, np.asarray(LZ).ravel(), check_finite=False)
-        out[pos] = mu / (1.0 + del_w[pos])
+            raw_delete, _, _ = _cached_delete(cache, L, S, kappa, N, XTY, p0, LZ)
+        else:
+            raw_delete = np.asarray(del_w)[pos]
+        if "coefficients" not in cache:
+            z = _cached_lz(cache, L, XTY, LZ)
+            cache["coefficients"] = solve_triangular(L.T, z, check_finite=False)
+        out[pos] = q2 * cache["coefficients"] / (1.0 + raw_delete)
 
-    # out-of-model coordinates: E[beta_j | gamma_{-j}, y] = B*mu / (1 + B),
-    # with mu_j = q2*u_j/d_j from the same residual projections as the
-    # add-stage weights and B the raw add weight
+    # Out-of-model coordinates average mu_j = q2*u_j/d_j with the conditional
+    # inclusion probability expit(log B), avoiding inf/inf for large B.
+    # The residual projections are shared with the add-stage weights.
     sel = ~gamma
 
-    if gamma.sum() < s0:
-        dg = np.diag(XTX)
-
-        if add_uv is not None:
-            u, d, ok = add_uv
-            ok = ok & sel
-        else:
-            if pos.size:
-                z = solve_triangular(
-                    L, XTY_r[pos], lower=True, check_finite=False
-                )
-                W = solve_triangular(L, XTX[pos, :], lower=True, check_finite=False)
-                u = XTY_r - W.T @ z
-                d = dg - (W**2).sum(axis=0)
-            else:
-                u = XTY_r.copy()
-                d = dg.copy()
-
-            ok = sel & (d > 1e-12 * dg)
+    if pos.size < s0:
+        if add_uv is not None and "add_uv" not in cache:
+            cache["add_uv"] = add_uv
+        if "add_uv" not in cache:
+            _cached_add(cache, L, gamma, S, g, kappa, N, XTY, XTX, p0, LZ)
+        u, d, ok = cache["add_uv"]
+        ok = ok & sel
 
         with np.errstate(divide="ignore", invalid="ignore"):
             r = np.where(ok, (u**2) / (d * S), 0.0)
             mu_out = np.where(ok, q2 * u / d, 0.0)
         r = np.minimum(r, 1 - 1e-12)
-        B = np.where(ok, (1 - r) ** (-N / 2) / (p0**kappa), 0.0)
+        log_B = -(N / 2) * np.log1p(-r) - kappa * np.log(p0)
+        out[ok] = expit(log_B[ok]) * mu_out[ok]
 
-        out[sel] = np.where(ok[sel], B[sel] * mu_out[sel] / (1.0 + B[sel]), 0.0)
-
-    return out
+    cache["rb"] = out
+    return out.copy()
 
 
 def chol_full(XTX, gamma):
@@ -307,6 +399,7 @@ def propose(
     PS,
     LZ=None,
     rng=None,
+    cache=None,
 ):
 
     # one informed LIT-MH proposal of the requested move type: draws the
@@ -317,24 +410,25 @@ def propose(
 
     if rng is None:
         rng = np.random.default_rng()
+    cache = _bind_cache(cache, L, gamma, S, g, kappa, N, XTY, YTY, XTX, P0, s0)
 
     if ADS == 0:
-        w_add, trunc_add, u, d, ok = _add_stage(
-            L, gamma, S, g, kappa, N, XTY, XTX, P0, LZ=LZ
+        w_add, _, q_add, total = _cached_add(
+            cache, L, gamma, S, g, kappa, N, XTY, XTX, P0, LZ
         )
-        q_add = _normalize(trunc_add)
 
-        if q_add.sum() == 0:
+        if total == 0:
             return None
 
         j = int(rng.choice(P, p=q_add))
         gamma1, L1, LZ1, S1 = make_add(L, S, gamma, j, XTX, XTY, YTY, g)
 
-        w_del, trunc_del = _del_stage(L1, gamma1, S1, g, kappa, N, XTY, P0, LZ=LZ1)
-        q_del = _normalize(trunc_del)
+        proposal_cache = _bind_cache({}, L1, gamma1, S1, g, kappa, N, XTY, YTY, XTX, P0, s0)
+        _cached_delete(proposal_cache, L1, S1, kappa, N, XTY, P0, LZ1)
+        q_reverse = _delete_probability(proposal_cache, j)
         h_d_rev = move_prob(s + 1, s0, PA, PD, PS)[1]
 
-        ratio = (h_d_rev * q_del[j]) / (h_a * q_add[j]) * w_add[j]
+        ratio = (h_d_rev * q_reverse) / (h_a * q_add[j]) * w_add[j]
 
         return (
             gamma1,
@@ -342,22 +436,22 @@ def propose(
             LZ1,
             S1,
             ratio,
-            {"pre": {"add_uv": (u, d, ok)}, "post": {"del_w": w_del}},
+            {"pre": {"cache": cache}, "post": {"cache": proposal_cache}},
         )
 
     elif ADS == 1:
-        w_del, trunc_del = _del_stage(L, gamma, S, g, kappa, N, XTY, P0, LZ=LZ)
-        q_del = _normalize(trunc_del)
-        k = int(rng.choice(P, p=q_del))
+        w_del, _, q_del = _cached_delete(cache, L, S, kappa, N, XTY, P0, LZ)
+        selected = int(rng.choice(cache["pos"].size, p=q_del))
+        k = int(cache["pos"][selected])
         gamma1, L1, LZ1, S1 = make_delete(L, S, gamma, k, XTX, XTY, YTY, g)
 
-        w_add, trunc_add, u, d, ok = _add_stage(
-            L1, gamma1, S1, g, kappa, N, XTY, XTX, P0, LZ=LZ1
+        proposal_cache = _bind_cache({}, L1, gamma1, S1, g, kappa, N, XTY, YTY, XTX, P0, s0)
+        _, _, q_add, _ = _cached_add(
+            proposal_cache, L1, gamma1, S1, g, kappa, N, XTY, XTX, P0, LZ1
         )
-        q_add = _normalize(trunc_add)
         h_a_rev = move_prob(s - 1, s0, PA, PD, PS)[0]
 
-        ratio = (h_a_rev * q_add[k]) / (h_d * q_del[k]) * w_del[k]
+        ratio = (h_a_rev * q_add[k]) / (h_d * q_del[selected]) * w_del[selected]
 
         return (
             gamma1,
@@ -365,20 +459,21 @@ def propose(
             LZ1,
             S1,
             ratio,
-            {"pre": {"del_w": w_del}, "post": {"add_uv": (u, d, ok)}},
+            {"pre": {"cache": cache}, "post": {"cache": proposal_cache}},
         )
 
     else:
-        w_del, trunc_del = _del_stage(L, gamma, S, g, kappa, N, XTY, P0, LZ=LZ)
-        q_del = _normalize(trunc_del)
-        k = int(rng.choice(P, p=q_del))
+        _, _, q_del = _cached_delete(cache, L, S, kappa, N, XTY, P0, LZ)
+        selected = int(rng.choice(cache["pos"].size, p=q_del))
+        k = int(cache["pos"][selected])
         gamma0, L0, LZ0, S0 = make_delete(L, S, gamma, k, XTX, XTY, YTY, g)
 
         # the two exclusions of a swap (k forward, j reverse) share the same
         # add-stage computation on gamma0
-        w_add, trunc_add, _, _, _ = _add_stage(
+        _, trunc_add, _, _, _ = _add_stage(
             L0, gamma0, S0, g, kappa, N, XTY, XTX, P0, LZ=LZ0
         )
+        total_add = trunc_add.sum()
         q_add = _exclude_normalize(trunc_add, k)
 
         if q_add.sum() == 0:
@@ -387,14 +482,27 @@ def propose(
         j = int(rng.choice(P, p=q_add))
         gamma1, L1, LZ1, S1 = make_add(L0, S0, gamma0, j, XTX, XTY, YTY, g)
 
-        w_del1, trunc_del1 = _del_stage(L1, gamma1, S1, g, kappa, N, XTY, P0, LZ=LZ1)
-        q_del1 = _normalize(trunc_del1)
-        q_add1 = _exclude_normalize(trunc_add, j)
+        proposal_cache = _bind_cache({}, L1, gamma1, S1, g, kappa, N, XTY, YTY, XTX, P0, s0)
+        _cached_delete(proposal_cache, L1, S1, kappa, N, XTY, P0, LZ1)
+        q_del_reverse = _delete_probability(proposal_cache, j)
+        q_add_reverse = _excluded_probability(trunc_add, total_add, j, k)
 
-        # move-type probabilities cancel between forward and reverse swap
-        ratio = (w_add[j] * w_del[k]) * (
-            (q_add1[k] * q_del1[j]) / (q_add[j] * q_del[k])
-        )
+        # Equal model sizes cancel the sparsity prior and move probabilities.
+        # Compute the posterior ratio directly from the two endpoint residuals:
+        # multiplying the intermediate add/delete factors can give inf * 0
+        # even when the swap ratio is finite. A missing reverse move rejects.
+        if q_add_reverse == 0 or q_del_reverse == 0:
+            ratio = 0.0
+        else:
+            log_ratio = (
+                (N / 2) * (np.log(S) - np.log(S1))
+                + np.log(q_add_reverse)
+                + np.log(q_del_reverse)
+                - np.log(q_add[j])
+                - np.log(q_del[selected])
+            )
+            with np.errstate(over="ignore", under="ignore"):
+                ratio = np.exp(log_ratio)
 
         return (
             gamma1,
@@ -402,5 +510,5 @@ def propose(
             LZ1,
             S1,
             ratio,
-            {"pre": {"del_w": w_del}, "post": {"del_w": w_del1}},
+            {"pre": {"cache": cache}, "post": {"cache": proposal_cache}},
         )

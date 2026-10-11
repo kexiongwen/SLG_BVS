@@ -1,0 +1,192 @@
+{
+  "schema_version": 2,
+  "claim_id": "C_SAMPLER_FIRST_THREE_OPTIMIZATIONS",
+  "repository": {
+    "commit": "a83866122093cca78d07d765eee45fa40f528970",
+    "dirty": true
+  },
+  "command": [
+    "C:\\Users\\kexio\\miniconda3\\python.exe",
+    "-B",
+    "benchmarks/compare_optimizations.py",
+    "--output",
+    "benchmarks/results/optimizations-2026-10-11/comparison.json"
+  ],
+  "environment": {
+    "software": [
+      {
+        "name": "runner-python",
+        "version": "3.14.7"
+      },
+      {
+        "name": "Python (Anaconda)",
+        "version": "3.14.7"
+      },
+      {
+        "name": "NumPy",
+        "version": "2.5.3"
+      },
+      {
+        "name": "SciPy",
+        "version": "1.18.1"
+      },
+      {
+        "name": "threadpoolctl",
+        "version": "3.5.0"
+      }
+    ],
+    "hardware": "Windows-11-10.0.26300-SP0"
+  },
+  "mathematics": {
+    "assertion_tested": "Compare elapsed time and memory of the corrected pre-optimization sampler and the optimized sampler on four fixed seeded workloads.",
+    "coefficient_domain": "IEEE 754 float64 NumPy arrays; Boolean model indicators",
+    "conventions": "DF_MCMC timings include Gram construction and sampling, exclude input generation and output hashing. Timing and memory instrumentation use separate subprocesses. Memory includes actual ndarray backing allocations, not just visible slice sizes.",
+    "inputs": [
+      "Seeded independent and block-correlated Gaussian design matrices defined by benchmarks/compare_optimizations.py"
+    ],
+    "bounds": {
+      "cases": [
+        "strong_signal",
+        "weak_signal",
+        "correlated_competitors",
+        "trace_heavy"
+      ],
+      "N": 250,
+      "P": [
+        800,
+        2000
+      ],
+      "retained_samples": [
+        1500,
+        2000
+      ],
+      "burn_in": [
+        500,
+        2000
+      ],
+      "maximum_model_size": 30,
+      "timing_repeats_per_variant_case": 5,
+      "warmups_per_timing_worker": 1,
+      "memory_calls_per_variant_case": 1,
+      "BLAS_threads": 1,
+      "worker_wall_timeout_seconds": 180
+    },
+    "non_claims": [
+      "No universal runtime or memory improvement across machines, dimensions, data or sampler options.",
+      "This is not a mixing-time or convergence test and does not establish multimodality.",
+      "Identical seeds and finite regression tests do not guarantee identical model paths at every floating-point acceptance boundary.",
+      "OS peak working set includes interpreter, imports and inputs; tracemalloc covers tracked allocations after input generation and is a different measurement."
+    ]
+  },
+  "randomness": {
+    "used": true,
+    "generator": "numpy.random.default_rng (PCG64); separate fixed seeds for data and sampler",
+    "seed": {
+      "data": 2871,
+      "sampler": 9137
+    }
+  },
+  "run": {
+    "started_at": "2026-10-11T04:11:26.531300+00:00",
+    "runtime_seconds": 111.331822,
+    "exit_status": 0,
+    "status": "completed",
+    "timeout_seconds": 600.0,
+    "max_output_bytes": 1048576,
+    "resource_limits": {
+      "memory_bytes": null,
+      "cpu_seconds": null,
+      "max_cores": null,
+      "max_threads": 1
+    },
+    "missing_results": [],
+    "invalid_results": []
+  },
+  "execution_artifacts": [
+    "benchmarks/compare_optimizations.py",
+    "benchmarks/baselines/before_optimizations.zip",
+    "BVS/__init__.py",
+    "BVS/DF_MCMC.py",
+    "BVS/proposal.py",
+    "BVS/cholupdate.py",
+    "BVS/ESS.py"
+  ],
+  "input_artifacts": [
+    {
+      "path": "benchmarks/compare_optimizations.py",
+      "sha256": "ce1536eee2ed47c08342cad5444a1f63fd5491b2399a0032ddc89a8fffd5f996",
+      "sha256_after": "ce1536eee2ed47c08342cad5444a1f63fd5491b2399a0032ddc89a8fffd5f996"
+    },
+    {
+      "path": "benchmarks/baselines/before_optimizations.zip",
+      "sha256": "256a63a9b5e8c73881ecba644003a270dd964e0bd7c72de5e0b3d2cb3c5d25ec",
+      "sha256_after": "256a63a9b5e8c73881ecba644003a270dd964e0bd7c72de5e0b3d2cb3c5d25ec"
+    },
+    {
+      "path": "BVS/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "BVS/DF_MCMC.py",
+      "sha256": "ab2c825c9ce98eec137f1d538a50983e848396be6f48aa50c131d834c6da7925",
+      "sha256_after": "ab2c825c9ce98eec137f1d538a50983e848396be6f48aa50c131d834c6da7925"
+    },
+    {
+      "path": "BVS/proposal.py",
+      "sha256": "41a00adc54900ce6de0aea515d1add04a62483c43dfecbdc05e364d814c29d3c",
+      "sha256_after": "41a00adc54900ce6de0aea515d1add04a62483c43dfecbdc05e364d814c29d3c"
+    },
+    {
+      "path": "BVS/cholupdate.py",
+      "sha256": "381c0d6cbb92b19f7dc593cc63d4cf3c8edbcb052e73836cb0b85ec80ee4b3b6",
+      "sha256_after": "381c0d6cbb92b19f7dc593cc63d4cf3c8edbcb052e73836cb0b85ec80ee4b3b6"
+    },
+    {
+      "path": "BVS/ESS.py",
+      "sha256": "831a3d0872d610407386428d3c945eccb55fda1f255e028374312255029e93ac",
+      "sha256_after": "831a3d0872d610407386428d3c945eccb55fda1f255e028374312255029e93ac"
+    }
+  ],
+  "output_directory": "benchmarks/results/optimizations-2026-10-11",
+  "declared_results": [
+    "benchmarks/results/optimizations-2026-10-11/comparison.json"
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/results/optimizations-2026-10-11/stdout.txt",
+      "sha256": "6cb8a6517f5e02766fb415e867200e0b330c6d4a91c86d69573880155e27cbde",
+      "kind": "log"
+    },
+    {
+      "path": "benchmarks/results/optimizations-2026-10-11/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "log"
+    },
+    {
+      "path": "benchmarks/results/optimizations-2026-10-11/comparison.json",
+      "sha256": "04b2dd551e007388f36a5cf07db6a97f2a0232c7cfc0b5e67e62c4ac2ba21b11",
+      "kind": "result"
+    }
+  ],
+  "checks": [
+    {
+      "check": "input hashes unchanged",
+      "passed": true
+    },
+    {
+      "check": "process exited successfully within enforced limits",
+      "passed": true
+    },
+    {
+      "check": "declared result files are present and regular",
+      "passed": true
+    }
+  ],
+  "result": "Run completed; mathematical assertion requires interpretation and review.",
+  "residual_risks": [
+    "Command success does not establish the mathematical interpretation.",
+    "Only listed input artifacts are pinned; external dependencies need recorded versions.",
+    "The thread cap uses conventional environment variables; a child program may ignore them."
+  ]
+}
