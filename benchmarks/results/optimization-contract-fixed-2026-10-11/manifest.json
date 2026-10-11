@@ -1,0 +1,186 @@
+{
+  "schema_version": 2,
+  "claim_id": "C_SAMPLER_FIRST_THREE_OPTIMIZATIONS",
+  "repository": {
+    "commit": "57c9a3e2c7ac145ad12efded825a3e7b66d78d88",
+    "dirty": true
+  },
+  "command": [
+    "C:\\Users\\kexio\\miniconda3\\python.exe",
+    "-B",
+    "benchmarks/compare_optimizations.py",
+    "--output",
+    "benchmarks/results/optimization-contract-fixed-2026-10-11/comparison.json"
+  ],
+  "environment": {
+    "software": [
+      {
+        "name": "runner-python",
+        "version": "3.14.7"
+      },
+      {
+        "name": "Python (Anaconda)",
+        "version": "3.14.7"
+      },
+      {
+        "name": "NumPy",
+        "version": "2.5.3"
+      },
+      {
+        "name": "SciPy",
+        "version": "1.18.1"
+      },
+      {
+        "name": "threadpoolctl",
+        "version": "3.5.0"
+      }
+    ],
+    "hardware": "Windows-11-10.0.26300-SP0"
+  },
+  "mathematics": {
+    "assertion_tested": "Compare elapsed time and memory of the corrected pre-optimization sampler and the optimized sampler on four fixed seeded workloads.",
+    "coefficient_domain": "IEEE 754 float64 NumPy arrays; Boolean model indicators",
+    "conventions": "DF_MCMC timings include Gram construction and sampling, exclude input generation and output hashing. Timing and memory instrumentation use separate subprocesses. Memory includes actual ndarray backing allocations, not just visible slice sizes.",
+    "inputs": [
+      "Seeded independent and block-correlated Gaussian design matrices defined by benchmarks/compare_optimizations.py"
+    ],
+    "bounds": {
+      "cases": [
+        "strong_signal",
+        "weak_signal",
+        "correlated_competitors",
+        "trace_heavy"
+      ],
+      "N": 250,
+      "P": [
+        800,
+        2000
+      ],
+      "retained_samples": [
+        1500,
+        2000
+      ],
+      "burn_in": [
+        500,
+        2000
+      ],
+      "maximum_model_size": 30,
+      "timing_repeats_per_variant_case": 5,
+      "warmups_per_timing_worker": 1,
+      "memory_calls_per_variant_case": 1,
+      "BLAS_threads": 1,
+      "worker_wall_timeout_seconds": 180
+    },
+    "non_claims": [
+      "No universal runtime or memory improvement across machines, dimensions, data or sampler options.",
+      "This is not a mixing-time or convergence test and does not establish multimodality.",
+      "Identical seeds and finite regression tests do not guarantee identical model paths at every floating-point acceptance boundary.",
+      "OS peak working set includes interpreter, imports and inputs; tracemalloc covers tracked allocations after input generation and is a different measurement."
+    ]
+  },
+  "randomness": {
+    "used": true,
+    "generator": "numpy.random.default_rng (PCG64); separate fixed seeds for data and sampler",
+    "seed": {
+      "data": 2871,
+      "sampler": 9137
+    }
+  },
+  "run": {
+    "started_at": "2026-10-11T06:45:30.662616+00:00",
+    "runtime_seconds": 105.507192,
+    "exit_status": 0,
+    "status": "completed",
+    "timeout_seconds": 600.0,
+    "max_output_bytes": 1048576,
+    "resource_limits": {
+      "memory_bytes": null,
+      "cpu_seconds": null,
+      "max_cores": null,
+      "max_threads": 1
+    },
+    "missing_results": [],
+    "invalid_results": []
+  },
+  "execution_artifacts": [
+    "benchmarks/compare_optimizations.py",
+    "benchmarks/baselines/before_optimizations.zip",
+    "BVS/__init__.py",
+    "BVS/DF_MCMC.py",
+    "BVS/proposal.py",
+    "BVS/ESS.py"
+  ],
+  "input_artifacts": [
+    {
+      "path": "benchmarks/compare_optimizations.py",
+      "sha256": "ce1536eee2ed47c08342cad5444a1f63fd5491b2399a0032ddc89a8fffd5f996",
+      "sha256_after": "ce1536eee2ed47c08342cad5444a1f63fd5491b2399a0032ddc89a8fffd5f996"
+    },
+    {
+      "path": "benchmarks/baselines/before_optimizations.zip",
+      "sha256": "256a63a9b5e8c73881ecba644003a270dd964e0bd7c72de5e0b3d2cb3c5d25ec",
+      "sha256_after": "256a63a9b5e8c73881ecba644003a270dd964e0bd7c72de5e0b3d2cb3c5d25ec"
+    },
+    {
+      "path": "BVS/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "BVS/DF_MCMC.py",
+      "sha256": "ab2c825c9ce98eec137f1d538a50983e848396be6f48aa50c131d834c6da7925",
+      "sha256_after": "ab2c825c9ce98eec137f1d538a50983e848396be6f48aa50c131d834c6da7925"
+    },
+    {
+      "path": "BVS/proposal.py",
+      "sha256": "244c838f255520209b2d6446ea59554320b347cdb6808a83b956a5c886853cb7",
+      "sha256_after": "244c838f255520209b2d6446ea59554320b347cdb6808a83b956a5c886853cb7"
+    },
+    {
+      "path": "BVS/ESS.py",
+      "sha256": "831a3d0872d610407386428d3c945eccb55fda1f255e028374312255029e93ac",
+      "sha256_after": "831a3d0872d610407386428d3c945eccb55fda1f255e028374312255029e93ac"
+    }
+  ],
+  "output_directory": "benchmarks/results/optimization-contract-fixed-2026-10-11",
+  "declared_results": [
+    "benchmarks/results/optimization-contract-fixed-2026-10-11/comparison.json"
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/results/optimization-contract-fixed-2026-10-11/stdout.txt",
+      "sha256": "b39ab995730dae137b7ab3d9973798f2b69fb224ba5950e9c17cc3d5253b30af",
+      "kind": "log"
+    },
+    {
+      "path": "benchmarks/results/optimization-contract-fixed-2026-10-11/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "log"
+    },
+    {
+      "path": "benchmarks/results/optimization-contract-fixed-2026-10-11/comparison.json",
+      "sha256": "4502c74856fa18924c3fd1dc6f31fd06151c8b63e922205b9fbfd2c1439b6cc4",
+      "kind": "result"
+    }
+  ],
+  "checks": [
+    {
+      "check": "input hashes unchanged",
+      "passed": true
+    },
+    {
+      "check": "process exited successfully within enforced limits",
+      "passed": true
+    },
+    {
+      "check": "declared result files are present and regular",
+      "passed": true
+    }
+  ],
+  "result": "Run completed; mathematical assertion requires interpretation and review.",
+  "residual_risks": [
+    "Command success does not establish the mathematical interpretation.",
+    "Only listed input artifacts are pinned; external dependencies need recorded versions.",
+    "The thread cap uses conventional environment variables; a child program may ignore them."
+  ]
+}

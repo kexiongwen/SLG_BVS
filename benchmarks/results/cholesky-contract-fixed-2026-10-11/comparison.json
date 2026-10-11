@@ -1,0 +1,2047 @@
+{
+  "seed": 20261011,
+  "python": "3.14.7 | packaged by Anaconda, Inc. | (main, Aug 14 2026, 10:12:46) [MSC v.1942 64 bit (AMD64)]",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+  "threadpools": [
+    {
+      "user_api": "blas",
+      "internal_api": "mkl",
+      "num_threads": 1,
+      "prefix": "mkl_rt",
+      "filepath": "C:\\Users\\kexio\\miniconda3\\Library\\bin\\mkl_rt.2.dll",
+      "version": "2025.0-Product",
+      "threading_layer": "intel"
+    },
+    {
+      "user_api": "openmp",
+      "internal_api": "openmp",
+      "num_threads": 1,
+      "prefix": "libiomp",
+      "filepath": "C:\\Users\\kexio\\miniconda3\\Library\\bin\\libiomp5md.dll",
+      "version": null
+    }
+  ],
+  "conventions": "float64 SPD Gram matrices; existing lower factors; full methods include advanced-index submatrix copying; update methods include cross-product gathering. Factors and indices are precomputed outside timings.",
+  "limitations": "Kernel microbenchmark only, not end-to-end sampler speed. One well-conditioned matrix per size, three positions, five timing batches. Does not establish near-singular stability or a universal crossover threshold.",
+  "rows": [
+    {
+      "size_before_add": 5,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0018019999988609925,
+        0.001411299999745097,
+        0.0015805000002728775,
+        0.0014191000009304844,
+        0.0014775000017834827
+      ],
+      "median_microseconds": 9.850000011889884,
+      "relative_reconstruction_error": 8.459162809396555e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.005602699999144534,
+        0.005842399998073233,
+        0.005990300000121351,
+        0.006035100002918625,
+        0.005941999999777181
+      ],
+      "median_microseconds": 39.613333331847876,
+      "relative_reconstruction_error": 1.8909724108343e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0017377000003762078,
+        0.00202740000167978,
+        0.0020956000007572584,
+        0.0017119000003731344,
+        0.0015342999977292493
+      ],
+      "median_microseconds": 11.584666669174718,
+      "relative_reconstruction_error": 1.2059120581042628e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0024612999986857176,
+        0.0017437999995308928,
+        0.0016108999989228323,
+        0.0017074000024877023,
+        0.0018191999988630414
+      ],
+      "median_microseconds": 11.625333330205953,
+      "relative_reconstruction_error": 1.1381495143094023e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0019207000004826114,
+        0.0016465000007883646,
+        0.0017695999995339662,
+        0.0019571999982872512,
+        0.0019872000011673663
+      ],
+      "median_microseconds": 12.804666669884076,
+      "relative_reconstruction_error": 1.4248537549062067e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0019272999998065643,
+        0.0017413999994460028,
+        0.0015640000019629952,
+        0.0020274999988032505,
+        0.0017875999983516522
+      ],
+      "median_microseconds": 11.917333322344348,
+      "relative_reconstruction_error": 8.459162809396555e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 2,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0017489999991084915,
+        0.002134999998816056,
+        0.0016773999996075872,
+        0.0015192999999271706,
+        0.0017020999985106755
+      ],
+      "median_microseconds": 11.347333323404504,
+      "relative_reconstruction_error": 1.2059120581042628e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 2,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0015334000017901417,
+        0.0014174999996612314,
+        0.0016532999979972374,
+        0.001473299998906441,
+        0.001614499997231178
+      ],
+      "median_microseconds": 10.222666678600945,
+      "relative_reconstruction_error": 1.1381495143094023e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 2,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.001712299999780953,
+        0.0015296999990823679,
+        0.0016303000011248514,
+        0.0013565999979618937,
+        0.0013813999976264313
+      ],
+      "median_microseconds": 10.197999993882453,
+      "relative_reconstruction_error": 1.2845261549678808e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 2,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.001546399998915149,
+        0.0018577000009827316,
+        0.002229100002296036,
+        0.0015945999984978698,
+        0.0019477000023471192
+      ],
+      "median_microseconds": 12.384666673218211,
+      "relative_reconstruction_error": 1.2826944544758963e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 2,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0018115999992005527,
+        0.001999300002353266,
+        0.0016687999996065628,
+        0.001597900001797825,
+        0.0016382999965571798
+      ],
+      "median_microseconds": 11.125333330710419,
+      "relative_reconstruction_error": 1.2826944544758963e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 2,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.008551599999918835,
+        0.007955599998240359,
+        0.008532399999239715,
+        0.008362900000065565,
+        0.0074813999999605585
+      ],
+      "median_microseconds": 55.75266666710377,
+      "relative_reconstruction_error": 1.9344799700387247e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 5,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0017673000002105255,
+        0.001666500000283122,
+        0.001591199998074444,
+        0.001624400003493065,
+        0.0016059999979916029
+      ],
+      "median_microseconds": 10.829333356620433,
+      "relative_reconstruction_error": 1.2452350510154357e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 5,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.001881100000900915,
+        0.0018477000012353528,
+        0.0015168999998422805,
+        0.0015240000029734802,
+        0.0014331999991554767
+      ],
+      "median_microseconds": 10.160000019823201,
+      "relative_reconstruction_error": 1.2452350510154357e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 5,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0031696000005467795,
+        0.00305099999968661,
+        0.0032453999992867466,
+        0.00324209999962477,
+        0.0031613999999535736
+      ],
+      "median_microseconds": 21.130666670311864,
+      "relative_reconstruction_error": 1.183786969639197e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 5,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0015607999994244892,
+        0.0014646999989054166,
+        0.001524500003142748,
+        0.0015677999981562607,
+        0.001662999999098247
+      ],
+      "median_microseconds": 10.405333329496594,
+      "relative_reconstruction_error": 1.2059120581042628e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 5,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.001677599997492507,
+        0.0014066000003367662,
+        0.0014420000006793998,
+        0.0013964999998279382,
+        0.0015572000011161435
+      ],
+      "median_microseconds": 9.613333337862665,
+      "relative_reconstruction_error": 1.1381495143094023e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 5,
+      "position": 5,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00015910000001895241,
+        0.00013100000069243833,
+        0.00015580000035697594,
+        0.00015669999993406236,
+        0.00014880000162520446
+      ],
+      "median_microseconds": 1.0386666690465063,
+      "relative_reconstruction_error": 1.2452350510154357e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0025521999996271916,
+        0.0019423999983700924,
+        0.0018923999996331986,
+        0.0017981999990297481,
+        0.0017032000032486394
+      ],
+      "median_microseconds": 12.615999997554658,
+      "relative_reconstruction_error": 1.0046929727731349e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0019769000027736183,
+        0.0018058999994536862,
+        0.001627000001462875,
+        0.001578000003064517,
+        0.001537399999506306
+      ],
+      "median_microseconds": 10.846666676419167,
+      "relative_reconstruction_error": 9.926385557393904e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.010168500000872882,
+        0.009632799999963026,
+        0.009444899998925393,
+        0.013397499998973217,
+        0.013127300000633113
+      ],
+      "median_microseconds": 67.79000000581921,
+      "relative_reconstruction_error": 3.61080372334411e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0016961000001174398,
+        0.0016471999988425523,
+        0.0015883000014582649,
+        0.0016577999995206483,
+        0.001634700001886813
+      ],
+      "median_microseconds": 10.981333325617015,
+      "relative_reconstruction_error": 7.89444513790297e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0017718000017339364,
+        0.0015612000024702866,
+        0.0015705000005254988,
+        0.0015843000001041219,
+        0.0019485000011627562
+      ],
+      "median_microseconds": 10.562000000694146,
+      "relative_reconstruction_error": 9.955529402365626e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0030423999996855855,
+        0.002682199999981094,
+        0.0034922999984701164,
+        0.0036504999989119824,
+        0.0026876000010815915
+      ],
+      "median_microseconds": 20.28266666457057,
+      "relative_reconstruction_error": 1.389259193697296e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 5,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0019399999982852023,
+        0.0019642000006570015,
+        0.002098400000249967,
+        0.002191399998991983,
+        0.0017542999994475394
+      ],
+      "median_microseconds": 13.094666671046676,
+      "relative_reconstruction_error": 1.5841947511698118e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 5,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0016434999997727573,
+        0.0016060000016295817,
+        0.0019568000025174115,
+        0.0016646000003674999,
+        0.001582199998665601
+      ],
+      "median_microseconds": 10.956666665151715,
+      "relative_reconstruction_error": 1.1047684538393451e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 5,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0015230000026349444,
+        0.001440699998056516,
+        0.00207609999779379,
+        0.0020112999991397373,
+        0.0014795999995840248
+      ],
+      "median_microseconds": 10.15333335089963,
+      "relative_reconstruction_error": 1.3405662469035148e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 5,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.009008599998196587,
+        0.008829599999444326,
+        0.008661500000016531,
+        0.00869339999917429,
+        0.008883800001058262
+      ],
+      "median_microseconds": 58.86399999629551,
+      "relative_reconstruction_error": 1.6187784132261738e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 5,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.001772699997673044,
+        0.0018678000014915597,
+        0.0015893999989202712,
+        0.0016527999978279695,
+        0.0016418999985035043
+      ],
+      "median_microseconds": 11.018666652186463,
+      "relative_reconstruction_error": 7.89444513790297e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 5,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0015338999983214308,
+        0.0016466999986732844,
+        0.0018644000010681339,
+        0.0014873999971314333,
+        0.0015244000023812987
+      ],
+      "median_microseconds": 10.225999988809539,
+      "relative_reconstruction_error": 9.955529402365626e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 10,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0015751999999338295,
+        0.0014840000003459863,
+        0.0014955000006011687,
+        0.001793399998859968,
+        0.0015244999995047692
+      ],
+      "median_microseconds": 10.163333330031795,
+      "relative_reconstruction_error": 9.955529402365626e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 10,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00012829999832320027,
+        0.0001359999987471383,
+        0.00013789999866276048,
+        0.0001247000000148546,
+        0.00012599999899975955
+      ],
+      "median_microseconds": 0.8553333221546685,
+      "relative_reconstruction_error": 8.190262765447275e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 10,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0015600999977323227,
+        0.0018710000003920868,
+        0.0015717999995104037,
+        0.0018316999994567595,
+        0.0016001000003598165
+      ],
+      "median_microseconds": 10.66733333573211,
+      "relative_reconstruction_error": 8.190262765447275e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 10,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0014988999973866157,
+        0.0014402999986486975,
+        0.001469100003305357,
+        0.0014496000003418885,
+        0.0015824999973119702
+      ],
+      "median_microseconds": 9.794000022035712,
+      "relative_reconstruction_error": 7.057275486228884e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 10,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.003089999998337589,
+        0.0028413000000000466,
+        0.002860200002032798,
+        0.003288399999291869,
+        0.003204399999958696
+      ],
+      "median_microseconds": 20.59999998891726,
+      "relative_reconstruction_error": 7.610073691241744e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 10,
+      "position": 10,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002315399997314671,
+        0.0028659000017796643,
+        0.002118600001267623,
+        0.002118199998221826,
+        0.0021864999980607536
+      ],
+      "median_microseconds": 14.576666653738357,
+      "relative_reconstruction_error": 7.89444513790297e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002605300000141142,
+        0.0030130000013741665,
+        0.0023624999994353857,
+        0.0020744000030390453,
+        0.002055500001006294
+      ],
+      "median_microseconds": 15.749999996235905,
+      "relative_reconstruction_error": 9.25806959802702e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.005799299997306662,
+        0.007050299998809351,
+        0.00615049999760231,
+        0.005974600000627106,
+        0.005745700000261422
+      ],
+      "median_microseconds": 39.83066667084737,
+      "relative_reconstruction_error": 1.58427901885337e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002562900001066737,
+        0.00214849999974831,
+        0.002067900000838563,
+        0.003131299999949988,
+        0.002060300001176074
+      ],
+      "median_microseconds": 14.3233333316554,
+      "relative_reconstruction_error": 1.0320440049168875e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0019351000009919517,
+        0.0025245999968319666,
+        0.002425900001981063,
+        0.002480200000718469,
+        0.002406799998425413
+      ],
+      "median_microseconds": 16.172666679873753,
+      "relative_reconstruction_error": 9.742072111866434e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.02082200000222656,
+        0.01893980000022566,
+        0.018912299998191884,
+        0.018612299998494564,
+        0.0190723000014259
+      ],
+      "median_microseconds": 126.26533333483773,
+      "relative_reconstruction_error": 1.8258432801232452e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002303699999174569,
+        0.002265799997985596,
+        0.0021350999995775055,
+        0.00247999999919557,
+        0.0025562000009813346
+      ],
+      "median_microseconds": 15.357999994497126,
+      "relative_reconstruction_error": 1.0067743001230825e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 10,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.014873699998133816,
+        0.01507560000027297,
+        0.013319099998625461,
+        0.015828899999178248,
+        0.014704099998198217
+      ],
+      "median_microseconds": 99.15799998755877,
+      "relative_reconstruction_error": 1.1628405206990233e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 10,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002888300001359312,
+        0.002461899999616435,
+        0.002220300000772113,
+        0.0021083999999973457,
+        0.002336300000024494
+      ],
+      "median_microseconds": 15.575333333496625,
+      "relative_reconstruction_error": 1.0067743001230825e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 10,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002066600001853658,
+        0.002126999999745749,
+        0.0021486000005097594,
+        0.0019206999968446326,
+        0.0020614000022760592
+      ],
+      "median_microseconds": 13.777333345691053,
+      "relative_reconstruction_error": 9.25806959802702e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 10,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00348659999872325,
+        0.0034433000000717584,
+        0.003963200000725919,
+        0.0037450999989232514,
+        0.0033105000002251472
+      ],
+      "median_microseconds": 23.243999991488334,
+      "relative_reconstruction_error": 1.1549294615755252e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 10,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002426000002742512,
+        0.0023032999997667503,
+        0.0023423000020557083,
+        0.002131600002030609,
+        0.0027076999976998195
+      ],
+      "median_microseconds": 15.615333347038055,
+      "relative_reconstruction_error": 9.115558433221537e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 10,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0019095999996352475,
+        0.0019089999987045303,
+        0.0019203000010747928,
+        0.002270400000270456,
+        0.0021254000021144748
+      ],
+      "median_microseconds": 12.802000007165285,
+      "relative_reconstruction_error": 9.088409881940282e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 20,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002495299999281997,
+        0.002796100001432933,
+        0.0024282000013045035,
+        0.0027898999978788197,
+        0.002173599998059217
+      ],
+      "median_microseconds": 16.635333328546647,
+      "relative_reconstruction_error": 9.818664427154403e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 20,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002043799999228213,
+        0.001974700000573648,
+        0.0022296999995887745,
+        0.0021850000011909287,
+        0.0019725999991351273
+      ],
+      "median_microseconds": 13.625333328188086,
+      "relative_reconstruction_error": 8.792814842852077e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 20,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0032118000017362647,
+        0.003195199999026954,
+        0.0035427000002528075,
+        0.0035889000027964357,
+        0.0036130999978922773
+      ],
+      "median_microseconds": 23.618000001685385,
+      "relative_reconstruction_error": 9.648323407800305e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 20,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0024534000003768597,
+        0.0025892999983625486,
+        0.002582799999800045,
+        0.002328099999431288,
+        0.0026328000021749176
+      ],
+      "median_microseconds": 17.218666665333632,
+      "relative_reconstruction_error": 1.0067743001230825e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 20,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002097599997796351,
+        0.002436000002489891,
+        0.0023460000011255033,
+        0.0025920999978552572,
+        0.0024243999978352804
+      ],
+      "median_microseconds": 16.162666652235202,
+      "relative_reconstruction_error": 9.25806959802702e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 20,
+      "position": 20,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00013499999840860255,
+        0.00013029999900027178,
+        0.00013220000255387276,
+        0.00014370000280905515,
+        0.00015039999925647862
+      ],
+      "median_microseconds": 0.8999999893906837,
+      "relative_reconstruction_error": 9.818664427154403e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.03529239999988931,
+        0.03653189999749884,
+        0.03871169999911217,
+        0.035458800000924384,
+        0.030849099999613827
+      ],
+      "median_microseconds": 236.39200000616256,
+      "relative_reconstruction_error": 2.355226493065155e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002946100001281593,
+        0.003012799999851268,
+        0.0027690000024449546,
+        0.0026567999993858393,
+        0.002888600000005681
+      ],
+      "median_microseconds": 19.257333333371207,
+      "relative_reconstruction_error": 1.2602777836532589e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0023069999988365453,
+        0.0026805000015883707,
+        0.0028406999990693294,
+        0.00250429999869084,
+        0.0022882999983266927
+      ],
+      "median_microseconds": 16.6953333246056,
+      "relative_reconstruction_error": 1.0602189197969033e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.008224199998949189,
+        0.008106299999781186,
+        0.008437699998466996,
+        0.008051699998759432,
+        0.008603300000686431
+      ],
+      "median_microseconds": 54.82799999299459,
+      "relative_reconstruction_error": 2.090219972762278e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0028158999994047917,
+        0.0027485999999043997,
+        0.002657299999555107,
+        0.002653300001838943,
+        0.003249199999117991
+      ],
+      "median_microseconds": 18.323999999362666,
+      "relative_reconstruction_error": 1.2954391435386604e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002360800001042662,
+        0.0023766999984218273,
+        0.0022707999996782746,
+        0.0025678000019979663,
+        0.0022968000012042467
+      ],
+      "median_microseconds": 15.738666673617749,
+      "relative_reconstruction_error": 9.839856097923008e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 15,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0050005999983113725,
+        0.0050155000026279595,
+        0.004600599997502286,
+        0.005725200000597397,
+        0.00495510000109789
+      ],
+      "median_microseconds": 33.337333322075814,
+      "relative_reconstruction_error": 1.7899719169590416e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 15,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0028534999983094167,
+        0.002560999997513136,
+        0.003059300001041265,
+        0.0031920999972498976,
+        0.004014199999801349
+      ],
+      "median_microseconds": 20.3953333402751,
+      "relative_reconstruction_error": 1.2640651411197097e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 15,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0024812000010570046,
+        0.002445800000714371,
+        0.003803600000537699,
+        0.002664400002686307,
+        0.0026542000014160294
+      ],
+      "median_microseconds": 17.694666676106863,
+      "relative_reconstruction_error": 9.607831919707195e-17,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 15,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.02059259999805363,
+        0.020832700000028126,
+        0.020242599999619415,
+        0.01979349999965052,
+        0.02126930000304128
+      ],
+      "median_microseconds": 137.2839999870242,
+      "relative_reconstruction_error": 1.3928835521186153e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 15,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0028149999998277053,
+        0.0028286000015214086,
+        0.0028972000000067055,
+        0.0027952000018558465,
+        0.0038163999997777864
+      ],
+      "median_microseconds": 18.857333343476057,
+      "relative_reconstruction_error": 1.2602777836532589e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 15,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0030148000005283393,
+        0.0026585000014165416,
+        0.002559699998528231,
+        0.002416299998003524,
+        0.0027838000023621134
+      ],
+      "median_microseconds": 17.723333342776943,
+      "relative_reconstruction_error": 1.0602189197969033e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 30,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0036104999999224674,
+        0.0034231999998155516,
+        0.003552099999069469,
+        0.0038797999986854848,
+        0.0038615000012214296
+      ],
+      "median_microseconds": 24.069999999483116,
+      "relative_reconstruction_error": 1.2355004022333128e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 30,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002995900002133567,
+        0.0030542999993485864,
+        0.0033106000009865966,
+        0.003114099999947939,
+        0.002892299999075476
+      ],
+      "median_microseconds": 20.361999995657243,
+      "relative_reconstruction_error": 1.2602777836532589e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 30,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002375100000790553,
+        0.002486400000634603,
+        0.00233499999740161,
+        0.0024378999987675343,
+        0.002514899999368936
+      ],
+      "median_microseconds": 16.252666658450227,
+      "relative_reconstruction_error": 1.0602189197969033e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 30,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00013269999908516183,
+        0.00012789999891538173,
+        0.00012849999984609894,
+        0.00013109999781590886,
+        0.00021239999841782264
+      ],
+      "median_microseconds": 0.8739999854393924,
+      "relative_reconstruction_error": 1.2437600112176192e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 30,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.002903900000092108,
+        0.0034234000013384502,
+        0.0026562999992165715,
+        0.0030434000000241213,
+        0.003867399998853216
+      ],
+      "median_microseconds": 20.28933333349414,
+      "relative_reconstruction_error": 1.2437600112176192e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 30,
+      "position": 30,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0026576999989629257,
+        0.0029612999969685916,
+        0.0026312000009056646,
+        0.0023961000006238464,
+        0.0023873999998613726
+      ],
+      "median_microseconds": 17.541333339371096,
+      "relative_reconstruction_error": 1.0668796172296327e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.003929099999368191,
+        0.0036503000010270625,
+        0.0035812000023724977,
+        0.003854500002489658,
+        0.0035123999987263232
+      ],
+      "median_microseconds": 24.335333340180416,
+      "relative_reconstruction_error": 1.1474846879183235e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.013794400001643226,
+        0.016480000002047746,
+        0.014228399999410613,
+        0.016828399999212706,
+        0.014181899998220615
+      ],
+      "median_microseconds": 94.85599999607075,
+      "relative_reconstruction_error": 2.453353526833954e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.004292599998734659,
+        0.004701499998191139,
+        0.004724899998109322,
+        0.004384700001537567,
+        0.004154099999141181
+      ],
+      "median_microseconds": 29.23133334358378,
+      "relative_reconstruction_error": 1.4717306328561965e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0036486999997578096,
+        0.003585200000088662,
+        0.003398900000320282,
+        0.0037672999969800003,
+        0.0033513999987917487
+      ],
+      "median_microseconds": 23.901333333924413,
+      "relative_reconstruction_error": 1.1151289751834245e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0484762000014598,
+        0.046532300002581906,
+        0.048839200000657,
+        0.04910329999984242,
+        0.052617500001360895
+      ],
+      "median_microseconds": 325.5946666710467,
+      "relative_reconstruction_error": 2.04876766236208e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.004847199998039287,
+        0.00444959999731509,
+        0.005116199998155935,
+        0.008938000002672197,
+        0.008218099999794504
+      ],
+      "median_microseconds": 34.10799998770623,
+      "relative_reconstruction_error": 1.5178875971491952e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 25,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.010322999998606974,
+        0.010070700001961086,
+        0.010054300000774674,
+        0.010715299998992123,
+        0.008411100003286265
+      ],
+      "median_microseconds": 67.1380000130739,
+      "relative_reconstruction_error": 1.6845183737807287e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 25,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.004672899998695357,
+        0.004731600001832703,
+        0.004402200000185985,
+        0.007880899996962398,
+        0.007035200000245823
+      ],
+      "median_microseconds": 31.54400001221802,
+      "relative_reconstruction_error": 1.5176823056088732e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 25,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00388329999987036,
+        0.003917300000466639,
+        0.003657100001873914,
+        0.003516299999319017,
+        0.004225699998642085
+      ],
+      "median_microseconds": 25.8886666658024,
+      "relative_reconstruction_error": 1.0541260328438188e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 25,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.028921900000568712,
+        0.029644400001416216,
+        0.03038139999989653,
+        0.030372700002772035,
+        0.029265299999678973
+      ],
+      "median_microseconds": 197.62933334277477,
+      "relative_reconstruction_error": 1.8464080066087163e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 25,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.009159299999737414,
+        0.009243399999832036,
+        0.004606099999364233,
+        0.004347900001448579,
+        0.004680500001995824
+      ],
+      "median_microseconds": 31.20333334663883,
+      "relative_reconstruction_error": 1.5178875971491952e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 25,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.003603799999837065,
+        0.004010299999208655,
+        0.003742099997907644,
+        0.0035236000003351364,
+        0.0037854000001971144
+      ],
+      "median_microseconds": 24.947333319384295,
+      "relative_reconstruction_error": 1.1474846879183235e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 50,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.0043139000008523,
+        0.004325000001699664,
+        0.0042673999996623024,
+        0.004393100000015693,
+        0.004254999999830034
+      ],
+      "median_microseconds": 28.75933333901533,
+      "relative_reconstruction_error": 1.5137334931398116e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 50,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.003722199999174336,
+        0.0038475999972433783,
+        0.0035069000005023554,
+        0.0035997000013594516,
+        0.0033956000006583054
+      ],
+      "median_microseconds": 23.99800000906301,
+      "relative_reconstruction_error": 1.1380377664612158e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 50,
+      "method": "add_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.003671299997222377,
+        0.0038591000011365395,
+        0.003654100000858307,
+        0.003450599997449899,
+        0.0036698999974760227
+      ],
+      "median_microseconds": 24.465999983173486,
+      "relative_reconstruction_error": 1.5113552538950374e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 50,
+      "method": "add_numpy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.005133200000273064,
+        0.0052031000013812445,
+        0.0051787000011245254,
+        0.005601400000159629,
+        0.00498870000228635
+      ],
+      "median_microseconds": 34.524666674163505,
+      "relative_reconstruction_error": 1.5178875971491952e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 50,
+      "method": "add_scipy_full",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.004144099999393802,
+        0.0038241000002017245,
+        0.0038740999989386182,
+        0.0036605999994208105,
+        0.0037338000001909677
+      ],
+      "median_microseconds": 25.49400000134483,
+      "relative_reconstruction_error": 1.1474846879183235e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 50,
+      "position": 50,
+      "method": "delete_update",
+      "calls_per_batch": 150,
+      "batches_seconds": [
+        0.00018120000095223077,
+        0.00013789999866276048,
+        0.0001311999985773582,
+        0.00014450000162469223,
+        0.00016169999798876233
+      ],
+      "median_microseconds": 0.9633333441646149,
+      "relative_reconstruction_error": 1.5137334931398116e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0035303999975440092,
+        0.003458600000158185,
+        0.003420900000492111,
+        0.0036409999993338715,
+        0.003942299998016097
+      ],
+      "median_microseconds": 70.60799995088018,
+      "relative_reconstruction_error": 1.8707868893994862e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0031893000013951678,
+        0.0026842000006581657,
+        0.002691099998628488,
+        0.002907400001276983,
+        0.0028737000029650517
+      ],
+      "median_microseconds": 57.474000059301034,
+      "relative_reconstruction_error": 1.212238137910791e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.03307850000055623,
+        0.03207219999967492,
+        0.03869910000139498,
+        0.03637420000086422,
+        0.03248449999955483
+      ],
+      "median_microseconds": 661.5700000111246,
+      "relative_reconstruction_error": 2.3693874913302687e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0037233999973977916,
+        0.0038945999986026436,
+        0.003939999998692656,
+        0.003553200000169454,
+        0.003327599999465747
+      ],
+      "median_microseconds": 74.46799994795583,
+      "relative_reconstruction_error": 1.8285051287328842e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0026637000009941403,
+        0.0028409999977156986,
+        0.0031129000017244834,
+        0.002836399999068817,
+        0.0028490000004239846
+      ],
+      "median_microseconds": 56.81999995431397,
+      "relative_reconstruction_error": 1.2246066744850676e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.008509700001013698,
+        0.009632700002839556,
+        0.00951569999961066,
+        0.009121899998717709,
+        0.00899560000107158
+      ],
+      "median_microseconds": 182.43799997435417,
+      "relative_reconstruction_error": 2.325012553676665e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 50,
+      "method": "add_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0189611000023433,
+        0.017619899997953326,
+        0.017541899997013388,
+        0.017241699999431148,
+        0.016721500000130618
+      ],
+      "median_microseconds": 350.83799994026776,
+      "relative_reconstruction_error": 1.9751785667356175e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 50,
+      "method": "add_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.003402399997867178,
+        0.003463799999735784,
+        0.0033382000001438428,
+        0.0034924000028695446,
+        0.0034601999977894593
+      ],
+      "median_microseconds": 69.20399995578919,
+      "relative_reconstruction_error": 1.8285051287328842e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 50,
+      "method": "add_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0025683999992907047,
+        0.0026441000009072013,
+        0.002600499999971362,
+        0.0030250999989220873,
+        0.002627800000482239
+      ],
+      "median_microseconds": 52.55600000964478,
+      "relative_reconstruction_error": 1.2246066744850676e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 50,
+      "method": "delete_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.004502199997659773,
+        0.004407800002809381,
+        0.004697999997006264,
+        0.0044006999996781815,
+        0.004362700001365738
+      ],
+      "median_microseconds": 88.15600005618762,
+      "relative_reconstruction_error": 2.0946786392709172e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 50,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0033653999998932704,
+        0.003549500001099659,
+        0.003307999999378808,
+        0.0032835999991220888,
+        0.0032962000004772563
+      ],
+      "median_microseconds": 66.15999998757616,
+      "relative_reconstruction_error": 1.8732036006203416e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 50,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.00286729999788804,
+        0.0026102000010723714,
+        0.0024975999986054376,
+        0.002552300000388641,
+        0.0026006999978562817
+      ],
+      "median_microseconds": 52.013999957125634,
+      "relative_reconstruction_error": 1.305058767343975e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 100,
+      "method": "add_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0028834000004280824,
+        0.0027660000014293473,
+        0.0026343999998061918,
+        0.002664100000401959,
+        0.0026163000002270564
+      ],
+      "median_microseconds": 53.28200000803918,
+      "relative_reconstruction_error": 1.2246066744850676e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 100,
+      "method": "delete_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        6.130000110715628e-05,
+        4.090000220458023e-05,
+        4.059999992023222e-05,
+        4.059999992023222e-05,
+        4.059999992023222e-05
+      ],
+      "median_microseconds": 0.8119999984046444,
+      "relative_reconstruction_error": 1.8212641655776757e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 100,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0032922999998845626,
+        0.003895500001817709,
+        0.003385899999557296,
+        0.0032447999983560294,
+        0.0033724000022630207
+      ],
+      "median_microseconds": 67.44800004526041,
+      "relative_reconstruction_error": 1.8212641655776757e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 100,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.002647400000569178,
+        0.003014000001712702,
+        0.0027477000003273133,
+        0.0025728000000526663,
+        0.0025927000024239533
+      ],
+      "median_microseconds": 52.948000011383556,
+      "relative_reconstruction_error": 1.213613812771592e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 100,
+      "method": "add_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0015261000007740222,
+        0.0014310000005934853,
+        0.0016330000034940895,
+        0.0016949999990174547,
+        0.001491299997724127
+      ],
+      "median_microseconds": 30.522000015480444,
+      "relative_reconstruction_error": 1.8148990859545774e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 100,
+      "position": 100,
+      "method": "add_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.003468899998551933,
+        0.003509699999995064,
+        0.003398699998797383,
+        0.0035739999984798487,
+        0.0033827000006567687
+      ],
+      "median_microseconds": 69.37799997103866,
+      "relative_reconstruction_error": 1.8285051287328842e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 0,
+      "method": "add_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009633100002247375,
+        0.009482599998591468,
+        0.009515499998087762,
+        0.009503099998255493,
+        0.009420999998837942
+      ],
+      "median_microseconds": 190.06199996510986,
+      "relative_reconstruction_error": 1.3260610661517898e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 0,
+      "method": "delete_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.018696899998758454,
+        0.023677799999859417,
+        0.01774199999999837,
+        0.017968799998925533,
+        0.01921329999822774
+      ],
+      "median_microseconds": 373.9379999751691,
+      "relative_reconstruction_error": 2.499058526365226e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 0,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.011151099999551661,
+        0.01161599999977625,
+        0.011017100001481595,
+        0.010919700001977617,
+        0.011000399998010835
+      ],
+      "median_microseconds": 220.3420000296319,
+      "relative_reconstruction_error": 1.194372411124307e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 0,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009679300001153024,
+        0.00965619999988121,
+        0.009584300001733936,
+        0.009553600000799634,
+        0.009578499997587642
+      ],
+      "median_microseconds": 191.68600003467873,
+      "relative_reconstruction_error": 1.3828019159249517e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 0,
+      "method": "add_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.06168729999990319,
+        0.06406019999849377,
+        0.06180339999991702,
+        0.06398360000093817,
+        0.0596469000010984
+      ],
+      "median_microseconds": 1236.0679999983404,
+      "relative_reconstruction_error": 2.441625498766673e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 0,
+      "method": "add_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.0113762000000861,
+        0.011504099999001483,
+        0.011304600000585197,
+        0.011333300000842428,
+        0.01115619999836781
+      ],
+      "median_microseconds": 226.66600001684856,
+      "relative_reconstruction_error": 1.1627806754385516e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 100,
+      "method": "add_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.032796999999845866,
+        0.03177449999930104,
+        0.031352400001196656,
+        0.030795800001214957,
+        0.030899900000804337
+      ],
+      "median_microseconds": 627.0480000239331,
+      "relative_reconstruction_error": 1.8429357862678084e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 100,
+      "method": "add_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.011204299997189082,
+        0.01130149999880814,
+        0.011426199998822995,
+        0.01117770000200835,
+        0.011269200000242563
+      ],
+      "median_microseconds": 225.38400000485126,
+      "relative_reconstruction_error": 1.1627806754385516e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 100,
+      "method": "add_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009795699999813223,
+        0.009778899999218993,
+        0.009722599999804515,
+        0.009747799998876872,
+        0.00960049999775947
+      ],
+      "median_microseconds": 194.95599997753743,
+      "relative_reconstruction_error": 1.3260610661517898e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 100,
+      "method": "delete_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009615200000553159,
+        0.009761899997101864,
+        0.011403299999074079,
+        0.010895599996729288,
+        0.009422099999937927
+      ],
+      "median_microseconds": 195.23799994203728,
+      "relative_reconstruction_error": 1.7270812694823296e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 100,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.010905600000114646,
+        0.010520800002268516,
+        0.010980300001392607,
+        0.01063629999771365,
+        0.010453300001245225
+      ],
+      "median_microseconds": 212.725999954273,
+      "relative_reconstruction_error": 1.1490454623795875e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 100,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009282099999836646,
+        0.009190500000840984,
+        0.009087200000067241,
+        0.00910940000176197,
+        0.009079899999051122
+      ],
+      "median_microseconds": 182.18800003523938,
+      "relative_reconstruction_error": 1.3392077437369988e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 200,
+      "method": "delete_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.010625499999150634,
+        0.011151799997605849,
+        0.01139310000144178,
+        0.010898500000621425,
+        0.010924199999863049
+      ],
+      "median_microseconds": 218.48399999726098,
+      "relative_reconstruction_error": 1.1606751411013897e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 200,
+      "method": "delete_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009674799999629613,
+        0.009287400000175694,
+        0.00950139999986277,
+        0.00931499999933294,
+        0.009939999999915017
+      ],
+      "median_microseconds": 190.0279999972554,
+      "relative_reconstruction_error": 1.3240707476238252e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 200,
+      "method": "add_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.002880700001696823,
+        0.002930999999080086,
+        0.0028581999977177475,
+        0.0029068000003462657,
+        0.002846199997293297
+      ],
+      "median_microseconds": 57.61400003393646,
+      "relative_reconstruction_error": 1.1637763270360854e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 200,
+      "method": "add_numpy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.011805300000560237,
+        0.011421999999583932,
+        0.011222000000998378,
+        0.011422999999922467,
+        0.011453200000687502
+      ],
+      "median_microseconds": 228.45999999844935,
+      "relative_reconstruction_error": 1.1627806754385516e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 200,
+      "method": "add_scipy_full",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        0.009548400001222035,
+        0.009720300000481075,
+        0.009674000000813976,
+        0.009485700000368524,
+        0.009835500000917818
+      ],
+      "median_microseconds": 193.48000001627952,
+      "relative_reconstruction_error": 1.3260610661517898e-16,
+      "all_diagonals_positive": true
+    },
+    {
+      "size_before_add": 200,
+      "position": 200,
+      "method": "delete_update",
+      "calls_per_batch": 50,
+      "batches_seconds": [
+        4.7500001528533176e-05,
+        4.489999992074445e-05,
+        4.400000034365803e-05,
+        4.400000034365803e-05,
+        4.400000034365803e-05
+      ],
+      "median_microseconds": 0.8800000068731606,
+      "relative_reconstruction_error": 1.1606751411013897e-16,
+      "all_diagonals_positive": true
+    }
+  ]
+}

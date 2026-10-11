@@ -14,7 +14,6 @@ The sampler performs add/delete/swap Metropolis–Hastings moves on the model sp
 |---|---|
 | [`BVS/DF_MCMC.py`](BVS/DF_MCMC.py) | Sampler driver `DF_MCMC()` and conditional-posterior sampling `sample_beta()` |
 | [`BVS/proposal.py`](BVS/proposal.py) | Proposal layer: `weight` (informed thresholded proposal distribution), `move_prob` (move-type probabilities), `chol_full`/`make_delete`/`make_add` (proposal state construction), `propose` (proposal + MH ratio) |
-| [`BVS/cholupdate.py`](BVS/cholupdate.py) | Rank-1 Cholesky primitives: `update`/`downdate`/`chol_del`/`chol_add`/`chol_add_col`, giving $O(s^2)$ cost per move |
 | [`BVS/ESS.py`](BVS/ESS.py) | Effective sample size (ArviZ): `ess`, `ess_gamma`, `ess_beta`, `ess_sigma2`, `ess_from_df_mcmc` |
 | `tests/test_*.py` | Regression tests for posterior moments, MH and RB numerical stability, sampler boundaries, ESS, and notebook helpers (run `python -m pytest tests/`, or run each test script directly) |
 | `test1.ipynb` | Simulation study of paper §5.1: LIT-MH-1 finding high-posterior models, Table-1 style metrics ($\hat\gamma_{\max}$, $H_{\max}$, $t_{\max}$) |
@@ -119,7 +118,7 @@ Trace arrays allocate only the `M` retained columns and own their storage; burn-
 
 - `weight(L, gamma, S, ..., ADS, ind=None, p0=None, LZ=None)`: proposal weights and the normalized proposal distribution; `ADS` 0/1/2 selects the add/delete/swap-add stage, `ind` is the variable excluded by a swap, `p0` is the original p used in the prior (differs from the working column count under screening), and `LZ` optionally passes the caller-maintained $L^{-1}X_\gamma'y$ to skip re-solving.
 - `propose(L, gamma, S, ADS, ..., LZ=None, rng=None, cache=None)`: one proposal, returning `(gamma', L', LZ', S', ratio, reuse)`; returns `None` when the move has no candidate. The driver keeps `reuse['pre']['cache']` on rejection and replaces it with `reuse['post']['cache']` on acceptance. These dictionaries can also be passed to `rb_beta` via `**reuse['pre']` or `**reuse['post']`. A supplied cache is bound to immutable model/data arrays and scalar parameters; external callers that modify those arrays in place must clear the cache before reuse.
-- `make_add` / `make_delete`: single-covariate state construction (rank-1 update with fallback).
+- `make_add` / `make_delete`: single-covariate state construction by full refactorization of the target model's Gram matrix; deleting the factor's last column needs no factorization.
 - `ess(chains)`: accepts (M,) or (n_chains, M); `ess_from_df_mcmc(result)` accepts all trace outputs, including both `RB=True` structures. It reports `gamma` and, when present, `beta`, `sigma2`, and `beta_rb`; RB uses `method_beta`. The online dict raises because no trace is stored.
 
 ## Mapping to the paper
@@ -131,7 +130,6 @@ Trace arrays allocate only the `M` retained columns and own their storage; burn-
 | `propose()` | The MH acceptance ratio of eq. (14) (including the h factors; they cancel for swaps) |
 | `screen=` | Marginal-regression screening of eq. (11) (Fan & Lv 2008); excluded candidates get weight 0 rather than the floor $p^{\ell_a}$, and the chain on the restricted space remains exactly invariant |
 | `RB=` / `rb_beta()` | The Rao-Blackwellized estimator of $\mathbb{E}[\beta\mid y]$ from §5.2, built from the same quantities the proposal weights are computed from |
-| `cholupdate.py` | The $O(s^2)$ Cholesky updates of §2.3 (George & McCulloch 1997; Smith & Kohn 1996), $O(p\,s^2)$ per iteration |
 
 ## Numerical robustness
 
@@ -140,7 +138,7 @@ Trace arrays allocate only the `M` retained columns and own their storage; burn-
 - The proposal hot path represents deletion weights with only the active model's `s` entries. A swap shares its intermediate add stage and computes the reverse add probability as a scalar. The public `weight()` API continues to return dense vectors. Compact normalization can change floating-point rounding; regression tests check exact model trajectories and numerical agreement of posterior outputs against the saved pre-optimization baseline on bounded fixtures.
 - All randomness flows from a per-call `numpy.random.default_rng(seed)` instance, passed down to the move-type and candidate draws and (via scipy's `random_state`) to the conditional σ²/β draws — a given seed is exactly reproducible regardless of other `numpy.random` usage in the process.
 - Numerically collinear candidates (residual projection $d_j\le 10^{-12}\,\mathrm{diag}$) get weight zero and never enter a singular model; truncation is applied after the zeroing.
-- Failed rank-1 updates fall back to a full Cholesky; if that also fails the move is recorded as a stay. A collinear initial model is redrawn automatically.
+- Proposal states refactorize the target model's Gram submatrix with one LAPACK Cholesky call — at realistic model sizes this is faster and more stable than Python-level rank-1 updates (see [cholupdate_optimization_notes.md](cholupdate_optimization_notes.md); the retired kernels remain in the baseline archive). Deleting the factor's last column only truncates the factor. If refactorization fails, the move is recorded as a stay. A collinear initial model is redrawn automatically.
 - When $s_0$ exceeds the rank of the design, proposal stages with no candidates become self-loops that still contribute complete posterior samples.
 - Swap acceptance ratios combine endpoint residuals and proposal probabilities in the log domain; RB inclusion probabilities use a stable logistic transform of the log posterior ratio, avoiding `inf * 0` and `inf / inf` under strong signals.
 

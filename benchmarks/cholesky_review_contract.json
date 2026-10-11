@@ -1,0 +1,14 @@
+{
+  "claim_id": "C_CHOLESKY_KERNEL_ALTERNATIVES",
+  "mathematics": {
+    "assertion_tested": "Compare existing Cholesky insertion/deletion kernels with fresh NumPy/SciPy factorizations, checking reconstruction before timing.",
+    "coefficient_domain": "IEEE 754 float64",
+    "conventions": "Lower triangular factors of SPD Gram matrices; reconstruction relative Frobenius error below 1e-12. Full methods include Gram-submatrix gathering. Update methods include candidate cross-products gathering.",
+    "inputs": ["Seeded Gaussian design with 2(s+1) rows and s+1 columns; Gram plus identity"],
+    "bounds": {"sizes": [5, 10, 20, 30, 50, 100, 200], "positions": ["first", "middle", "last"], "methods_per_position": 6, "timing_batches": 5, "calls_per_batch": [50, 150], "threads": 1},
+    "non_claims": ["No end-to-end sampler speedup claim.", "No universal crossover threshold or near-singular stability guarantee.", "One seeded well-conditioned matrix per size is a bounded numerical comparison."]
+  },
+  "execution_artifacts": ["benchmarks/review_cholesky.py", "benchmarks/baselines/before_optimizations.zip"],
+  "software": [{"name": "Python", "version": "3.14.7"}, {"name": "NumPy", "version": "2.5.3"}, {"name": "SciPy", "version": "1.18.1"}, {"name": "threadpoolctl", "version": "3.5.0"}],
+  "randomness": {"used": true, "generator": "numpy.random.default_rng PCG64", "seed": 20261011}
+}

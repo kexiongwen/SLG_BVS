@@ -1,6 +1,6 @@
 #proposal layer of the LIT-MH sampler: the informed thresholded proposal
 #distribution (weight, paper eq. (9)-(13)), move-type probabilities (move_prob,
-#eq. (12)), proposal state construction with rank-1 Cholesky updates
+#eq. (12)), proposal state construction by full Cholesky refactorization
 #(chol_full, make_delete, make_add), and the per-move proposal with its MH
 #acceptance ratio (propose). The weight computation is split into per-move-type
 #stages (_del_stage, _add_stage) whose results are pure functions of the model
@@ -11,11 +11,6 @@ import numpy as np
 from numpy.linalg import cholesky
 from scipy.linalg import solve_triangular
 from scipy.special import expit
-
-try:  # importable both as package (BVS.proposal) and as flat module
-    from .cholupdate import chol_add_col, chol_del
-except ImportError:
-    from cholupdate import chol_add_col, chol_del
 
 
 def move_prob(s, s0, PA, PD, PS):
@@ -315,8 +310,8 @@ def rb_beta(
 
 def chol_full(XTX, gamma):
 
-    # full Cholesky of a model's Gram submatrix; fallback when a rank-1
-    # update fails
+    # full Cholesky of a model's Gram submatrix; at realistic model sizes one
+    # LAPACK call is faster and more stable than Python-level rank-1 updates
 
     pos = np.flatnonzero(gamma)
 
@@ -328,16 +323,18 @@ def chol_full(XTX, gamma):
 
 def make_delete(L, S, gamma, k, XTX, XTY, YTY, g):
 
-    # proposal state with covariate k removed; if the rank-1 downdate and
-    # the full Cholesky both fail, collapses to the current state
+    # proposal state with covariate k removed. Deleting the factor's last
+    # column needs no factorization (leading principal submatrix); any other
+    # deletion refactorizes. If refactorization fails, collapses to the
+    # current state
 
     gamma1 = gamma.copy()
     index = gamma[0 : k + 1].sum() - 1
     gamma1[k] = 0
 
-    try:
-        L1 = chol_del(L, index)
-    except (ValueError, np.linalg.LinAlgError):
+    if index == L.shape[0] - 1:
+        L1 = L[:index, :index].copy()
+    else:
         try:
             L1 = chol_full(XTX, gamma1)
         except np.linalg.LinAlgError:
@@ -358,18 +355,14 @@ def make_add(L, S, gamma, j, XTX, XTY, YTY, g):
 
     gamma1 = gamma.copy()
     gamma1[j] = 1
-    index = gamma1[0 : j + 1].sum() - 1
 
     try:
-        L1 = chol_add_col(XTX[np.flatnonzero(gamma), j], XTX[j, j], L, index)
-    except (ValueError, np.linalg.LinAlgError):
-        try:
-            L1 = chol_full(XTX, gamma1)
-        except np.linalg.LinAlgError:
-            LZc = solve_triangular(
-                L, XTY[gamma], lower=True, check_finite=False
-            )
-            return gamma.copy(), L, LZc, S
+        L1 = chol_full(XTX, gamma1)
+    except np.linalg.LinAlgError:
+        LZc = solve_triangular(
+            L, XTY[gamma], lower=True, check_finite=False
+        )
+        return gamma.copy(), L, LZc, S
 
     LZ1 = solve_triangular(L1, XTY[gamma1], lower=True, check_finite=False)
     S1 = (1 + 1 / g) * YTY - (LZ1**2).sum()

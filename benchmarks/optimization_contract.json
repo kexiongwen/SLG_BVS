@@ -31,7 +31,6 @@
     "BVS/__init__.py",
     "BVS/DF_MCMC.py",
     "BVS/proposal.py",
-    "BVS/cholupdate.py",
     "BVS/ESS.py"
   ],
   "software": [

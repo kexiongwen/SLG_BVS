@@ -1,0 +1,154 @@
+{
+  "schema_version": 2,
+  "claim_id": "C_CHOLESKY_KERNEL_ALTERNATIVES",
+  "repository": {
+    "commit": "57c9a3e2c7ac145ad12efded825a3e7b66d78d88",
+    "dirty": true
+  },
+  "command": [
+    "C:\\Users\\kexio\\miniconda3\\python.exe",
+    "-B",
+    "benchmarks/review_cholesky.py",
+    "--output",
+    "benchmarks/results/cholesky-review-2026-10-11-v2/comparison.json"
+  ],
+  "environment": {
+    "software": [
+      {
+        "name": "runner-python",
+        "version": "3.14.7"
+      },
+      {
+        "name": "Python",
+        "version": "3.14.7"
+      },
+      {
+        "name": "NumPy",
+        "version": "2.5.3"
+      },
+      {
+        "name": "SciPy",
+        "version": "1.18.1"
+      },
+      {
+        "name": "threadpoolctl",
+        "version": "3.5.0"
+      }
+    ],
+    "hardware": "Windows-11-10.0.26300-SP0"
+  },
+  "mathematics": {
+    "assertion_tested": "Compare existing Cholesky insertion/deletion kernels with fresh NumPy/SciPy factorizations, checking reconstruction before timing.",
+    "coefficient_domain": "IEEE 754 float64",
+    "conventions": "Lower triangular factors of SPD Gram matrices; reconstruction relative Frobenius error below 1e-12. Full methods include Gram-submatrix gathering. Update methods include candidate cross-products gathering.",
+    "inputs": [
+      "Seeded Gaussian design with 2(s+1) rows and s+1 columns; Gram plus identity"
+    ],
+    "bounds": {
+      "sizes": [
+        5,
+        10,
+        20,
+        30,
+        50,
+        100,
+        200
+      ],
+      "positions": [
+        "first",
+        "middle",
+        "last"
+      ],
+      "methods_per_position": 6,
+      "timing_batches": 5,
+      "calls_per_batch": [
+        50,
+        150
+      ],
+      "threads": 1
+    },
+    "non_claims": [
+      "No end-to-end sampler speedup claim.",
+      "No universal crossover threshold or near-singular stability guarantee.",
+      "One seeded well-conditioned matrix per size is a bounded numerical comparison."
+    ]
+  },
+  "randomness": {
+    "used": true,
+    "generator": "numpy.random.default_rng PCG64",
+    "seed": 20261011
+  },
+  "run": {
+    "started_at": "2026-10-11T05:45:09.136754+00:00",
+    "runtime_seconds": 4.673211,
+    "exit_status": 0,
+    "status": "completed",
+    "timeout_seconds": 180.0,
+    "max_output_bytes": 1048576,
+    "resource_limits": {
+      "memory_bytes": null,
+      "cpu_seconds": null,
+      "max_cores": null,
+      "max_threads": 1
+    },
+    "missing_results": [],
+    "invalid_results": []
+  },
+  "execution_artifacts": [
+    "benchmarks/review_cholesky.py",
+    "BVS/cholupdate.py"
+  ],
+  "input_artifacts": [
+    {
+      "path": "benchmarks/review_cholesky.py",
+      "sha256": "059f359032d7f0d5867b851d416aa609cdd9e77edb2c53fe39f2919dc8413843",
+      "sha256_after": "059f359032d7f0d5867b851d416aa609cdd9e77edb2c53fe39f2919dc8413843"
+    },
+    {
+      "path": "BVS/cholupdate.py",
+      "sha256": "381c0d6cbb92b19f7dc593cc63d4cf3c8edbcb052e73836cb0b85ec80ee4b3b6",
+      "sha256_after": "381c0d6cbb92b19f7dc593cc63d4cf3c8edbcb052e73836cb0b85ec80ee4b3b6"
+    }
+  ],
+  "output_directory": "benchmarks/results/cholesky-review-2026-10-11-v2",
+  "declared_results": [
+    "benchmarks/results/cholesky-review-2026-10-11-v2/comparison.json"
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/results/cholesky-review-2026-10-11-v2/stdout.txt",
+      "sha256": "66684da79d22a40b1c47d0f22057857188792290ae9d2493b39c7820cf767553",
+      "kind": "log"
+    },
+    {
+      "path": "benchmarks/results/cholesky-review-2026-10-11-v2/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "log"
+    },
+    {
+      "path": "benchmarks/results/cholesky-review-2026-10-11-v2/comparison.json",
+      "sha256": "8f08acef5d7982958a2564ce338519fdb1f504932877bbb65306f59f7f8e7bed",
+      "kind": "result"
+    }
+  ],
+  "checks": [
+    {
+      "check": "input hashes unchanged",
+      "passed": true
+    },
+    {
+      "check": "process exited successfully within enforced limits",
+      "passed": true
+    },
+    {
+      "check": "declared result files are present and regular",
+      "passed": true
+    }
+  ],
+  "result": "Run completed; mathematical assertion requires interpretation and review.",
+  "residual_risks": [
+    "Command success does not establish the mathematical interpretation.",
+    "Only listed input artifacts are pinned; external dependencies need recorded versions.",
+    "The thread cap uses conventional environment variables; a child program may ignore them."
+  ]
+}
